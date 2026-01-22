@@ -4,8 +4,11 @@ FROM eclipse-temurin:17-jdk-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy project files
+# Copy all project files
 COPY . .
+
+# Give execute permission to mvnw (THIS FIXES ERROR 126)
+RUN chmod +x mvnw
 
 # Build the application
 RUN ./mvnw clean package -DskipTests
