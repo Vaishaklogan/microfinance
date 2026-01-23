@@ -9,18 +9,18 @@ import java.util.List;
 
 public interface WeeklyCollectionRepository extends JpaRepository<WeeklyCollection, Long> {
 
-    @Query("""
-                SELECT SUM(w.amountPaid)
-                FROM WeeklyCollection w
-                WHERE w.collectionDate = :date
-            """)
-    Double getTotalCollectedForDate(LocalDate date);
+        @Query("""
+                            SELECT SUM(w.amountPaid)
+                            FROM WeeklyCollection w
+                            WHERE w.collectionDate = :date
+                        """)
+        Double getTotalCollectedForDate(LocalDate date);
 
-    @Query("""
-                SELECT w.loan.member.group.groupName, SUM(w.amountPaid)
-                FROM WeeklyCollection w
-                WHERE w.collectionDate = :date
-                GROUP BY w.loan.member.group.groupName
-            """)
-    List<Object[]> getGroupWiseCollection(LocalDate date);
+        @Query("""
+                            SELECT w.loan.member.group.groupName, SUM(w.amountPaid)
+                            FROM WeeklyCollection w
+                            WHERE w.collectionDate = :date
+                            GROUP BY w.loan.member.group.groupName
+                        """)
+        List<Object[]> getGroupWiseCollection(LocalDate date);
 }
