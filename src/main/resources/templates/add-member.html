@@ -35,14 +35,15 @@
 
             <div class="mb-3">
                 <label class="form-label">Group</label>
-                <select class="form-select" name="group.id" required>
-                <option value="">-- Select Group --</option>
-                <option th:each="g : ${groups}"
-                        th:value="${g.id}"
-                        th:text="${g.groupName}">
-                </option>
-            </select>
+                <select class="form-select" name="groupId" required>
+        <option value="">-- Select Group --</option>
+        <option th:each="g : ${groups}"
+                th:value="${g.id}"
+                th:text="${g.groupName}">
+        </option>
+    </select>
             </div>
+
 
             <button class="btn btn-success">Save Member</button>
             <a href="/members" class="btn btn-secondary">Cancel</a>

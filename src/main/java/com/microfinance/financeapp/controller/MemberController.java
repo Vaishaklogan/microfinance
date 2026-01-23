@@ -1,5 +1,6 @@
 package com.microfinance.financeapp.controller;
 
+import com.microfinance.financeapp.entity.Group;
 import com.microfinance.financeapp.entity.Member;
 import com.microfinance.financeapp.repository.GroupRepository;
 import com.microfinance.financeapp.repository.MemberRepository;
@@ -19,31 +20,50 @@ public class MemberController {
         this.groupRepo = groupRepo;
     }
 
+    // List only ACTIVE members
     @GetMapping
     public String list(Model model) {
         model.addAttribute("members", memberRepo.findByStatus("ACTIVE"));
         return "members";
     }
 
+    // Show add form (only ACTIVE groups)
     @GetMapping("/new")
     public String add(Model model) {
         model.addAttribute("member", new Member());
-        model.addAttribute("groups", groupRepo.findAll());
+        model.addAttribute("groups", groupRepo.findByStatus("ACTIVE"));
         return "add-member";
     }
 
+    // SAVE MEMBER (IMPORTANT FIX HERE)
     @PostMapping
-    public String save(Member member) {
+    public String save(@RequestParam String name,
+            @RequestParam String aadhaar,
+            @RequestParam String address,
+            @RequestParam(required = false) String landmark,
+            @RequestParam Long groupId) {
+
+        Group group = groupRepo.findById(groupId).orElseThrow();
+
+        Member member = new Member();
+        member.setName(name);
+        member.setAadhaar(aadhaar);
+        member.setAddress(address);
+        member.setLandmark(landmark);
+        member.setGroup(group);
         member.setStatus("ACTIVE");
+
         memberRepo.save(member);
+
         return "redirect:/members";
     }
 
+    // SOFT DELETE
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
-        Member m = memberRepo.findById(id).orElseThrow();
-        m.setStatus("INACTIVE");
-        memberRepo.save(m);
+        Member member = memberRepo.findById(id).orElseThrow();
+        member.setStatus("INACTIVE");
+        memberRepo.save(member);
         return "redirect:/members";
     }
 }
