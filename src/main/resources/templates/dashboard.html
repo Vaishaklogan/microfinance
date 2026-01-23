@@ -13,7 +13,7 @@
         }
         
         .dashboard-card {
-            border-radius: 12px;
+            border-radius: 14px;
             font-weight: 600;
         }
     </style>
@@ -26,11 +26,12 @@
         <!-- Header -->
         <div class="text-center mb-5">
             <h2 class="fw-bold">Microfinance Management System</h2>
-            <p class="text-muted">Weekly collection & loan management</p>
+            <p class="text-muted">Loans • Weekly Collection • Reports</p>
         </div>
 
-        <!-- Main Buttons -->
-        <div class="row justify-content-center g-4">
+        <!-- MAIN OPERATIONS -->
+        <h5 class="mb-3 text-secondary">Operations</h5>
+        <div class="row justify-content-center g-4 mb-5">
 
             <div class="col-md-3">
                 <a href="/groups" class="btn btn-primary w-100 py-4 fs-5 dashboard-card">
@@ -58,12 +59,28 @@
 
         </div>
 
-        <!-- Future Summary Section -->
-        <div class="row mt-5 text-center">
-            <div class="col-md-12">
-                <p class="text-muted fst-italic">
-                    Dashboard summary, charts & weekly totals will appear here.
-                </p>
+        <!-- REPORTS -->
+        <h5 class="mb-3 text-secondary">Reports & Analysis</h5>
+        <div class="row justify-content-center g-4">
+
+            <div class="col-md-3">
+                <a href="/reports/weekly" class="btn btn-info w-100 py-4 fs-5 dashboard-card text-white">
+                Weekly Report
+            </a>
+            </div>
+
+            <div class="col-md-3">
+                <a href="/reports/yearly?year=2026" class="btn btn-dark w-100 py-4 fs-5 dashboard-card">
+                Yearly Sunday Plan
+            </a>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="row mt-5">
+            <div class="col text-center text-muted fst-italic">
+                Finance calculations are automatic & audit-safe
             </div>
         </div>
 
