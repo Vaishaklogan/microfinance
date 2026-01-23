@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Weekly Collection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-4">
+        <h2 class="mb-4">Weekly Collection</h2>
+
+        <!-- Search -->
+        <form method="post" action="/collections/search" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Group</label>
+                <select class="form-select" name="groupId" required>
+                <option value="">-- Select Group --</option>
+                <option th:each="g : ${groups}"
+                        th:value="${g.id}"
+                        th:text="${g.groupName}">
+                </option>
+            </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Collection Date (Sunday)</label>
+                <input type="date" class="form-control" name="date" required>
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-primary w-100">Load Loans</button>
+            </div>
+        </form>
+
+        <!-- Loans Table -->
+        <table class="table table-bordered table-striped" th:if="${loans != null}">
+            <thead class="table-dark">
+                <tr>
+                    <th>Member</th>
+                    <th>Weekly Due</th>
+                    <th>Principal</th>
+                    <th>Interest</th>
+                    <th>Principal Bal</th>
+                    <th>Interest Bal</th>
+                    <th>Pay</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="l : ${loans}">
+                    <td th:text="${l.member.name}"></td>
+                    <td th:text="${l.weeklyInstallment}"></td>
+                    <td th:text="${l.weeklyPrincipal}"></td>
+                    <td th:text="${l.weeklyInterest}"></td>
+                    <td th:text="${l.principalBalance}"></td>
+                    <td th:text="${l.interestBalance}"></td>
+                    <td>
+                        <form method="post" action="/collections/pay" class="d-flex">
+                            <input type="hidden" name="loanId" th:value="${l.id}">
+                            <input type="hidden" name="date" th:value="${collectionDate}">
+                            <input type="hidden" name="groupId" th:value="${groupId}">
+                            <input type="number" name="amount" class="form-control me-2" required>
+                            <button class="btn btn-success">Pay</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>
