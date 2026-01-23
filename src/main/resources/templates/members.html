@@ -9,7 +9,7 @@
 <body class="bg-light">
 
     <div class="container mt-4">
-        <h2 class="mb-3">Members</h2>
+        <h3>Members</h3>
 
         <a href="/members/new" class="btn btn-primary mb-3">Add Member</a>
 
@@ -17,22 +17,20 @@
             <thead class="table-dark">
                 <tr>
                     <th>Name</th>
-                    <th>Aadhaar</th>
-                    <th>Address</th>
-                    <th>Landmark</th>
                     <th>Group</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="m : ${members}">
                     <td th:text="${m.name}"></td>
-                    <td th:text="${m.aadhaar}"></td>
-                    <td th:text="${m.address}"></td>
-                    <td th:text="${m.landmark}"></td>
                     <td th:text="${m.group.groupName}"></td>
+                    <td th:text="${m.status}"></td>
                     <td>
-                        <span class="badge bg-success" th:text="${m.status}"></span>
+                        <form th:action="@{/members/delete/{id}(id=${m.id})}" method="post" onsubmit="return confirm('Close this member?')">
+                            <button class="btn btn-danger btn-sm">Close</button>
+                        </form>
                     </td>
                 </tr>
             </tbody>

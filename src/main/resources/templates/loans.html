@@ -36,6 +36,12 @@
                     <td>
                         <span class="badge bg-primary" th:text="${l.status}"></span>
                     </td>
+                    <td>
+                        <form th:action="@{/loans/close/{id}(id=${l.id})}" method="post" onsubmit="return confirm('Close this loan?')">
+                            <button class="btn btn-danger btn-sm">Close</button>
+                        </form>
+                    </td>
+
                 </tr>
             </tbody>
         </table>

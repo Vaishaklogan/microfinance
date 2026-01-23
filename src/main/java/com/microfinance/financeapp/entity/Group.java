@@ -13,11 +13,12 @@ public class Group {
 
     private String groupName;
 
-    private String groupHead;
+    private LocalDate startDate;
 
-    private LocalDate startDate; // loan start anchor (Sunday)
+    private String status = "ACTIVE"; // ACTIVE / INACTIVE
 
-    // getters & setters
+    // Getters & Setters
+
     public Long getId() {
         return id;
     }
@@ -30,19 +31,19 @@ public class Group {
         this.groupName = groupName;
     }
 
-    public String getGroupHead() {
-        return groupHead;
-    }
-
-    public void setGroupHead(String groupHead) {
-        this.groupHead = groupHead;
-    }
-
     public LocalDate getStartDate() {
         return startDate;
     }
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

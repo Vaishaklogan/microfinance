@@ -11,35 +11,39 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/members")
 public class MemberController {
 
-    private final MemberRepository memberRepository;
-    private final GroupRepository groupRepository;
+    private final MemberRepository memberRepo;
+    private final GroupRepository groupRepo;
 
-    public MemberController(MemberRepository memberRepository,
-            GroupRepository groupRepository) {
-        this.memberRepository = memberRepository;
-        this.groupRepository = groupRepository;
+    public MemberController(MemberRepository memberRepo, GroupRepository groupRepo) {
+        this.memberRepo = memberRepo;
+        this.groupRepo = groupRepo;
     }
 
-    // Show all members
     @GetMapping
-    public String listMembers(Model model) {
-        model.addAttribute("members", memberRepository.findAll());
+    public String list(Model model) {
+        model.addAttribute("members", memberRepo.findByStatus("ACTIVE"));
         return "members";
     }
 
-    // Show add member form
     @GetMapping("/new")
-    public String showAddForm(Model model) {
+    public String add(Model model) {
         model.addAttribute("member", new Member());
-        model.addAttribute("groups", groupRepository.findAll());
+        model.addAttribute("groups", groupRepo.findAll());
         return "add-member";
     }
 
-    // Save member
     @PostMapping
-    public String saveMember(@ModelAttribute Member member) {
+    public String save(Member member) {
         member.setStatus("ACTIVE");
-        memberRepository.save(member);
+        memberRepo.save(member);
+        return "redirect:/members";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        Member m = memberRepo.findById(id).orElseThrow();
+        m.setStatus("INACTIVE");
+        memberRepo.save(m);
         return "redirect:/members";
     }
 }

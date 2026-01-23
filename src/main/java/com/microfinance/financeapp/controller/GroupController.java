@@ -36,4 +36,13 @@ public class GroupController {
         groupRepository.save(group);
         return "redirect:/groups";
     }
+
+    @PostMapping("/delete/{id}")
+    public String deleteGroup(@PathVariable Long id) {
+        Group g = groupRepository.findById(id).orElseThrow();
+        g.setStatus("INACTIVE");
+        groupRepository.save(g);
+        return "redirect:/groups";
+    }
+
 }

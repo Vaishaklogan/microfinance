@@ -15,13 +15,12 @@ public class Member {
     private String address;
     private String landmark;
 
+    private String status = "ACTIVE"; // ACTIVE / INACTIVE
+
     @ManyToOne
     private Group group;
 
-    private String status; // ACTIVE / CLOSED
-
     // Getters & Setters
-
     public Long getId() {
         return id;
     }

@@ -57,4 +57,13 @@ public class LoanController {
         loanRepository.save(loan);
         return "redirect:/loans";
     }
+
+    @PostMapping("/close/{id}")
+    public String closeLoan(@PathVariable Long id) {
+        Loan loan = loanRepository.findById(id).orElseThrow();
+        loan.setStatus("CLOSED");
+        loanRepository.save(loan);
+        return "redirect:/loans";
+    }
+
 }
