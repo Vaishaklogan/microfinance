@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>Members</title>
@@ -18,6 +18,8 @@
                 <tr>
                     <th>Name</th>
                     <th>Aadhaar</th>
+                    <th>Address</th>
+                    <th>Landmark</th>
                     <th>Group</th>
                     <th>Status</th>
                 </tr>
@@ -26,6 +28,8 @@
                 <tr th:each="m : ${members}">
                     <td th:text="${m.name}"></td>
                     <td th:text="${m.aadhaar}"></td>
+                    <td th:text="${m.address}"></td>
+                    <td th:text="${m.landmark}"></td>
                     <td th:text="${m.group.groupName}"></td>
                     <td>
                         <span class="badge bg-success" th:text="${m.status}"></span>

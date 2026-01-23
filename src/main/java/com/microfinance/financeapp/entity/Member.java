@@ -13,13 +13,15 @@ public class Member {
     private String name;
     private String aadhaar;
     private String address;
+    private String landmark;
 
     @ManyToOne
     private Group group;
 
     private String status; // ACTIVE / CLOSED
 
-    // getters & setters
+    // Getters & Setters
+
     public Long getId() {
         return id;
     }
@@ -46,6 +48,14 @@ public class Member {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getLandmark() {
+        return landmark;
+    }
+
+    public void setLandmark(String landmark) {
+        this.landmark = landmark;
     }
 
     public Group getGroup() {
