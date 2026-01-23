@@ -10,47 +10,28 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/groups")
 public class GroupController {
 
-    private final GroupRepository groupRepo;
+    private final GroupRepository groupRepository;
 
-    public GroupController(GroupRepository groupRepo) {
-        this.groupRepo = groupRepo;
+    public GroupController(GroupRepository groupRepository) {
+        this.groupRepository = groupRepository;
     }
 
-    // List only ACTIVE groups
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("groups", groupRepo.findByStatus("ACTIVE"));
+    public String groupsPage(Model model) {
+        model.addAttribute("groups", groupRepository.findAll());
+        model.addAttribute("group", new Group());
         return "groups";
     }
 
-    // Show add group form
-    @GetMapping("/new")
-    public String add(Model model) {
-        model.addAttribute("group", new Group());
-        return "add-group";
-    }
-
-    // SAVE GROUP (IMPORTANT FIX)
-    @PostMapping
-    public String save(@RequestParam String groupName,
-            @RequestParam String startDate) {
-
-        Group group = new Group();
-        group.setGroupName(groupName);
-        group.setStartDate(java.time.LocalDate.parse(startDate));
-        group.setStatus("ACTIVE");
-
-        groupRepo.save(group);
-
+    @PostMapping("/save")
+    public String saveGroup(@ModelAttribute Group group) {
+        groupRepository.save(group);
         return "redirect:/groups";
     }
 
-    // SOFT DELETE GROUP
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        Group group = groupRepo.findById(id).orElseThrow();
-        group.setStatus("INACTIVE");
-        groupRepo.save(group);
+    @GetMapping("/delete/{id}")
+    public String deleteGroup(@PathVariable Long id) {
+        groupRepository.deleteById(id);
         return "redirect:/groups";
     }
 }
