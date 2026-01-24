@@ -1,6 +1,7 @@
 package com.microfinance.financeapp.controller;
 
 import com.microfinance.financeapp.entity.Loan;
+import com.microfinance.financeapp.entity.Member;
 import com.microfinance.financeapp.repository.LoanRepository;
 import com.microfinance.financeapp.repository.MemberRepository;
 import org.springframework.stereotype.Controller;
@@ -34,15 +35,33 @@ public class LoanController {
 
     @PostMapping("/save")
     @SuppressWarnings("null")
-    public String saveLoan(@ModelAttribute Loan loan) {
+    public String saveLoan(@RequestParam Long memberId,
+            @RequestParam double loanAmount,
+            @RequestParam double interestAmount,
+            @RequestParam int repaymentWeeks) {
+
+        // Fetch the member
+        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        // Create and initialize loan
+        Loan loan = new Loan();
+        loan.setMember(member);
+        loan.setLoanAmount(loanAmount);
+        loan.setPrincipalAmount(loanAmount);
+        loan.setInterestAmount(interestAmount);
+        loan.setRepaymentWeeks(repaymentWeeks);
+        loan.setStatus("PENDING");
+
+        // Save the loan
         loanRepository.save(loan);
-        return "redirect:/";
+
+        return "redirect:/loans";
     }
 
     @GetMapping("/delete/{id}")
     @SuppressWarnings("null")
     public String deleteLoan(@PathVariable Long id) {
         loanRepository.deleteById(Long.valueOf(id));
-        return "redirect:/";
+        return "redirect:/loans";
     }
 }
