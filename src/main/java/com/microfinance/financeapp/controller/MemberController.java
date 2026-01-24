@@ -68,4 +68,21 @@ public class MemberController {
         memberRepo.save(member);
         return "redirect:/members";
     }
+
+    // Search member by memberCode
+    @GetMapping("/search")
+    public String search(@RequestParam(required = false) String memberCode, Model model) {
+        if (memberCode != null && !memberCode.isEmpty()) {
+            var member = memberRepo.findByMemberCode(memberCode);
+            if (member.isPresent()) {
+                model.addAttribute("searchMember", member.get());
+                model.addAttribute("memberCode", memberCode);
+                model.addAttribute("found", true);
+            } else {
+                model.addAttribute("found", false);
+                model.addAttribute("memberCode", memberCode);
+            }
+        }
+        return "member-search";
+    }
 }
