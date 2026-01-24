@@ -1,0 +1,49 @@
+package com.microfinance.financeapp.controller;
+
+import com.microfinance.financeapp.model.Loan;
+import com.microfinance.financeapp.repository.LoanRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+@RestController
+public class LoanExportController {
+
+    private final LoanRepository loanRepository;
+
+    public LoanExportController(LoanRepository loanRepository) {
+        this.loanRepository = loanRepository;
+    }
+
+    @GetMapping("/loans/export")
+    public void exportLoans(HttpServletResponse response) throws IOException {
+        List<Loan> loans = loanRepository.findAll();
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Loans");
+
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Member");
+        header.createCell(1).setCellValue("Loan Amount");
+        header.createCell(2).setCellValue("Interest");
+        header.createCell(3).setCellValue("Weeks");
+
+        int rowNum = 1;
+        for (Loan loan : loans) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(loan.getMember().getName());
+            row.createCell(1).setCellValue(loan.getLoanAmount());
+            row.createCell(2).setCellValue(loan.getInterestAmount());
+            row.createCell(3).setCellValue(loan.getTotalWeeks());
+        }
+
+        response.setHeader("Content-Disposition", "attachment; filename=loans.xlsx");
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+}

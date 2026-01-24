@@ -37,13 +37,14 @@ public class MemberController {
 
     // SAVE MEMBER (IMPORTANT FIX HERE)
     @PostMapping
+    @SuppressWarnings("null")
     public String save(@RequestParam String name,
             @RequestParam String aadhaar,
             @RequestParam String address,
             @RequestParam(required = false) String landmark,
             @RequestParam Long groupId) {
 
-        Group group = groupRepo.findById(groupId).orElseThrow();
+        Group group = groupRepo.findById(Long.valueOf(groupId)).orElseThrow();
 
         Member member = new Member();
         member.setName(name);
@@ -60,8 +61,9 @@ public class MemberController {
 
     // SOFT DELETE
     @PostMapping("/delete/{id}")
+    @SuppressWarnings("null")
     public String delete(@PathVariable Long id) {
-        Member member = memberRepo.findById(id).orElseThrow();
+        Member member = memberRepo.findById(Long.valueOf(id)).orElseThrow();
         member.setStatus("INACTIVE");
         memberRepo.save(member);
         return "redirect:/members";

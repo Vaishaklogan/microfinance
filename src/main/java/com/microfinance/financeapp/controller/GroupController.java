@@ -17,21 +17,23 @@ public class GroupController {
     }
 
     @GetMapping
-    public String groupsPage(Model model) {
+    public String groups(Model model) {
         model.addAttribute("groups", groupRepository.findAll());
         model.addAttribute("group", new Group());
         return "groups";
     }
 
     @PostMapping("/save")
+    @SuppressWarnings("null")
     public String saveGroup(@ModelAttribute Group group) {
         groupRepository.save(group);
         return "redirect:/groups";
     }
 
     @GetMapping("/delete/{id}")
+    @SuppressWarnings("null")
     public String deleteGroup(@PathVariable Long id) {
-        groupRepository.deleteById(id);
+        groupRepository.deleteById(Long.valueOf(id));
         return "redirect:/groups";
     }
 }
