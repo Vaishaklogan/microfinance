@@ -34,17 +34,27 @@ public class WeeklyCollectionController {
             @RequestParam String date,
             Model model) {
 
-        LocalDate collectionDate = LocalDate.parse(date);
-        List<Loan> loans = collectionService.getLoansForCollection(collectionDate);
+        try {
+            LocalDate collectionDate = LocalDate.parse(date);
+            List<Loan> loans = collectionService.getLoansForCollection(collectionDate);
 
-        loans.removeIf(l -> l.getMember().getGroup().getId().longValue() != groupId.longValue());
+            if (loans != null && !loans.isEmpty()) {
+                loans.removeIf(l -> l.getMember() == null ||
+                        l.getMember().getGroup() == null ||
+                        l.getMember().getGroup().getId().longValue() != groupId.longValue());
+            }
 
-        model.addAttribute("loans", loans);
-        model.addAttribute("collectionDate", collectionDate);
-        model.addAttribute("groupId", groupId);
-        model.addAttribute("groups", groupRepository.findAll());
+            model.addAttribute("loans", loans);
+            model.addAttribute("collectionDate", collectionDate);
+            model.addAttribute("groupId", groupId);
+            model.addAttribute("groups", groupRepository.findAll());
 
-        return "weekly-collection";
+            return "weekly-collection";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error loading loans: " + e.getMessage());
+            model.addAttribute("groups", groupRepository.findAll());
+            return "weekly-collection";
+        }
     }
 
     @PostMapping("/pay")
@@ -53,14 +63,20 @@ public class WeeklyCollectionController {
             @RequestParam String date,
             @RequestParam Long groupId) {
 
-        Loan loan = collectionService.getLoansForCollection(
-                LocalDate.parse(date)).stream()
-                .filter(l -> l.getId().longValue() == loanId.longValue())
-                .findFirst()
-                .orElseThrow();
+        try {
+            Loan loan = collectionService.getLoansForCollection(
+                    LocalDate.parse(date)).stream()
+                    .filter(l -> l.getId().longValue() == loanId.longValue())
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
 
-        collectionService.applyPayment(loan, amount, LocalDate.parse(date));
+            collectionService.applyPayment(loan, amount, LocalDate.parse(date));
 
-        return "redirect:/collections?groupId=" + groupId;
+            // Redirect back to search results
+            return "redirect:/collections/search?groupId=" + groupId + "&date=" + date;
+        } catch (Exception e) {
+            // On error, redirect back to collections page
+            return "redirect:/collections";
+        }
     }
 }

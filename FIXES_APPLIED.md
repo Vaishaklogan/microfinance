@@ -183,8 +183,8 @@ Interest to Deduct = Payment Amount - Principal to Deduct
   - Interest deducted: ₹230.6
   - Total: ₹1000 (no rounding loss)
 - When member pays ₹1000:
-  - Principal deducted: ₹769
-  - Interest deducted: ₹230
+  - Principal deducted: ₹769.4
+  - Interest deducted: ₹230.6
   - Remaining balances updated accordingly
 
 #### 2. Enhanced WeeklyCollectionService
@@ -248,22 +248,22 @@ For each loan, see:
 - Interest: ₹1,380
 - Weeks: 6
 - Weekly Installment: ₹1,000
-- Weekly Split: ₹769 (Principal) + ₹230 (Interest)
+- Weekly Split: ₹769.4 (Principal) + ₹230.6 (Interest)
 
 **Weekly Payments**:
 
 ```
 Payment 1: ₹1,000
-├─ Principal: ₹769 (new balance: ₹3,845)
-└─ Interest: ₹230 (new balance: ₹1,150)
+├─ Principal: ₹769.4 (new balance: ₹3,844.6)
+└─ Interest: ₹230.6 (new balance: ₹1,149.4)
 
 Payment 2: ₹1,000
-├─ Principal: ₹769 (new balance: ₹3,076)
-└─ Interest: ₹230 (new balance: ₹920)
+├─ Principal: ₹769.4 (new balance: ₹3,075.2)
+└─ Interest: ₹230.6 (new balance: ₹918.8)
 
 Payment 3: ₹1,000
-├─ Principal: ₹769 (new balance: ₹2,307)
-└─ Interest: ₹230 (new balance: ₹690)
+├─ Principal: ₹769.4 (new balance: ₹2,305.8)
+└─ Interest: ₹230.6 (new balance: ₹688.2)
 ```
 
 ### Key Features
@@ -275,6 +275,158 @@ Payment 3: ₹1,000
 ✅ **Member Tracking** - Unique IDs displayed in collection list
 ✅ **Complete Audit Trail** - All payments recorded in WeeklyCollection
 ✅ **Validation** - Amount validation before processing
+
+---
+
+## Complete Testing Guide for Weekly Collection
+
+### Prerequisites
+
+Before testing, ensure you have:
+
+1. ✅ At least 1 Group created
+2. ✅ At least 1 Member in the group
+3. ✅ At least 1 Active Loan for that member
+
+### Step-by-Step Test Flow
+
+#### Step 1: Navigate to Collections
+
+```
+1. Click "Collections" button on Dashboard
+2. You should see search form with:
+   - Group dropdown
+   - Collection Date picker
+   - Load Loans button
+```
+
+#### Step 2: Search for Loans
+
+```
+1. Select a Group from dropdown
+2. Select a Sunday date (or loan date range)
+3. Click "Load Loans" button
+4. Result: Should display table with active loans
+```
+
+#### Step 3: Review Loan Details
+
+```
+For each loan displayed, verify:
+- Member Name ✓
+- Member ID (MEM-2026-XXXXX) ✓
+- Weekly Due Amount (₹) ✓
+- Principal Portion (P: ₹769.4 format) ✓
+- Interest Portion (I: ₹230.6 format) ✓
+- Principal Balance (remaining) ✓
+- Interest Balance (remaining) ✓
+- Payment input field ✓
+```
+
+#### Step 4: Process Payment
+
+```
+1. Enter payment amount (e.g., 1000)
+2. Click "Pay" button
+3. Form submits to /collections/pay endpoint
+4. System processes:
+   - Principal portion calculated: ₹1000 × ratio = ₹769.4
+   - Interest portion = ₹1000 - ₹769.4 = ₹230.6
+   - Loan balances updated
+   - Payment recorded in database
+5. Redirect back to search results with updated balances
+```
+
+#### Step 5: Verify Results
+
+```
+After payment, check:
+- Principal Balance reduced by ₹769.4 ✓
+- Interest Balance reduced by ₹230.6 ✓
+- Total payment = ₹769.4 + ₹230.6 = ₹1000 ✓
+- Payment history in WeeklyCollection table ✓
+```
+
+### Testing Scenarios
+
+#### Scenario 1: Full Weekly Payment
+
+```
+Loan: Principal ₹10,000 + Interest ₹3,000 = ₹13,000
+Weekly: ₹1,000 (₹769.4 + ₹230.6)
+
+Payment: ₹1,000
+Expected Result:
+- Principal: ₹10,000 - ₹769.4 = ₹9,230.6 ✓
+- Interest: ₹3,000 - ₹230.6 = ₹2,769.4 ✓
+- Loan Status: ACTIVE
+```
+
+#### Scenario 2: Partial Payment
+
+```
+Same loan, Payment: ₹500
+
+Expected Result:
+- Principal: ₹500 × 0.7694 = ₹384.7 deducted
+- Interest: ₹500 - ₹384.7 = ₹115.3 deducted
+- Principal Balance: ₹9,615.3
+- Interest Balance: ₹2,884.7
+```
+
+#### Scenario 3: Final Payment (Loan Closure)
+
+```
+When remaining balance = ₹1,000
+Payment: ₹1,000
+
+Expected Result:
+- Principal completely paid: ₹0
+- Interest completely paid: ₹0
+- Loan Status: CLOSED ✓
+- Message: "Loan Fully Paid"
+```
+
+### Common Issues & Fixes
+
+#### Issue: "No loans found" message
+
+**Solution**:
+
+- Verify loans exist in database
+- Check loan status is "ACTIVE"
+- Ensure collection date is within loan date range
+- Verify group selection matches loan's group
+
+#### Issue: Payment not processing
+
+**Solution**:
+
+- Check browser console for errors
+- Verify amount field has valid number
+- Ensure form submission completes
+- Check database logs for save errors
+
+#### Issue: Incorrect split calculation
+
+**Solution**:
+
+- Verify loan has weeklyPrincipal and weeklyInstallment set
+- Check LoanCalculationService initialized loan correctly
+- Verify no null values in balance fields
+
+### Verification Checklist
+
+After completing payment, verify:
+
+- ✅ Payment recorded in database
+- ✅ Loan balance reduced correctly
+- ✅ Principal and interest split as 769.4 + 230.6
+- ✅ No rounding errors or loss of precision
+- ✅ Loan status updates to CLOSED when fully paid
+- ✅ Page redirects to search results
+- ✅ Updated balances display immediately
+- ✅ Payment history maintained in WeeklyCollection table
 
 ---
 
