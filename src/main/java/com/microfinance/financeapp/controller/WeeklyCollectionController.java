@@ -2,6 +2,7 @@ package com.microfinance.financeapp.controller;
 
 import com.microfinance.financeapp.entity.Loan;
 import com.microfinance.financeapp.repository.GroupRepository;
+import com.microfinance.financeapp.repository.WeeklyCollectionRepository;
 import com.microfinance.financeapp.service.WeeklyCollectionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,11 +17,14 @@ public class WeeklyCollectionController {
 
     private final WeeklyCollectionService collectionService;
     private final GroupRepository groupRepository;
+    private final WeeklyCollectionRepository collectionRepository;
 
     public WeeklyCollectionController(WeeklyCollectionService collectionService,
-            GroupRepository groupRepository) {
+            GroupRepository groupRepository,
+            WeeklyCollectionRepository collectionRepository) {
         this.collectionService = collectionService;
         this.groupRepository = groupRepository;
+        this.collectionRepository = collectionRepository;
     }
 
     @GetMapping
@@ -29,8 +33,8 @@ public class WeeklyCollectionController {
         return "weekly-collection";
     }
 
-    @PostMapping("/search")
-    public String searchLoans(@RequestParam Long groupId,
+    @GetMapping("/search")
+    public String searchLoansGet(@RequestParam Long groupId,
             @RequestParam String date,
             Model model) {
 
@@ -57,6 +61,14 @@ public class WeeklyCollectionController {
         }
     }
 
+    @PostMapping("/search")
+    public String searchLoansPost(@RequestParam Long groupId,
+            @RequestParam String date,
+            Model model) {
+        // Redirect to GET endpoint to avoid POST-REDIRECT-GET issues
+        return "redirect:/collections/search?groupId=" + groupId + "&date=" + date;
+    }
+
     @PostMapping("/pay")
     public String pay(@RequestParam Long loanId,
             @RequestParam double amount,
@@ -77,6 +89,20 @@ public class WeeklyCollectionController {
         } catch (Exception e) {
             // On error, redirect back to collections page
             return "redirect:/collections";
+        }
+    }
+
+    @GetMapping("/history")
+    public String viewCollectionHistory(Model model) {
+        try {
+            var allCollections = collectionRepository.findAll();
+            model.addAttribute("collections", allCollections);
+            model.addAttribute("groups", groupRepository.findAll());
+            return "collection-history";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error loading collection history: " + e.getMessage());
+            model.addAttribute("groups", groupRepository.findAll());
+            return "collection-history";
         }
     }
 }
