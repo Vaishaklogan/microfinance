@@ -1,72 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 <head>
     <title>Groups</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-        }
-        
-        table {
-            width: 80%;
-            margin: 30px auto;
-            border-collapse: collapse;
-            background: white;
-        }
-        
-        th,
-        td {
-            padding: 12px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-        
-        th {
-            background: #e0e7ff;
-        }
-        
-        form {
-            width: 80%;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        
-        input,
-        button {
-            padding: 8px;
-            margin: 5px;
-        }
-    </style>
 </head>
 
 <body>
 
-    <h2 style="text-align:center;">Groups</h2>
+    <a href="/">🏠 Home</a>
 
-    <form th:action="@{/groups/save}" th:object="${group}" method="post">
-        <input type="text" th:field="*{name}" placeholder="Group Name" required />
-        <input type="number" th:field="*{startWeek}" placeholder="Start Week" required />
-        <input type="number" th:field="*{repaymentWeeks}" placeholder="Repayment Weeks" required />
-        <button type="submit">Add Group</button>
+    <h2>Create Group</h2>
+    <form action="/groups/save" method="post">
+        <input type="text" name="name" placeholder="Group Name" required />
+        <button type="submit">Save</button>
     </form>
 
-    <table>
+    <h2>All Groups</h2>
+    <table border="1">
         <tr>
-            <th>ID</th>
             <th>Name</th>
-            <th>Start Week</th>
-            <th>Repayment Weeks</th>
             <th>Action</th>
         </tr>
         <tr th:each="g : ${groups}">
-            <td th:text="${g.id}"></td>
             <td th:text="${g.name}"></td>
-            <td th:text="${g.startWeek}"></td>
-            <td th:text="${g.repaymentWeeks}"></td>
             <td>
                 <a th:href="@{/groups/delete/{id}(id=${g.id})}">Delete</a>
             </td>

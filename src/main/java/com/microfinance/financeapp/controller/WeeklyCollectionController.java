@@ -37,7 +37,7 @@ public class WeeklyCollectionController {
         LocalDate collectionDate = LocalDate.parse(date);
         List<Loan> loans = collectionService.getLoansForCollection(collectionDate);
 
-        loans.removeIf(l -> !l.getMember().getGroup().getId().equals(groupId));
+        loans.removeIf(l -> l.getMember().getGroup().getId().longValue() != groupId.longValue());
 
         model.addAttribute("loans", loans);
         model.addAttribute("collectionDate", collectionDate);
@@ -55,7 +55,7 @@ public class WeeklyCollectionController {
 
         Loan loan = collectionService.getLoansForCollection(
                 LocalDate.parse(date)).stream()
-                .filter(l -> l.getId().equals(loanId))
+                .filter(l -> l.getId().longValue() == loanId.longValue())
                 .findFirst()
                 .orElseThrow();
 

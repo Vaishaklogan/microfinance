@@ -7,9 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface LoanRepository extends JpaRepository<Loan, Long> {
-
-    List<Loan> findByStatus(String status);
-
-    List<Loan> findByStatusAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
-            String status, LocalDate date1, LocalDate date2);
+    List<Loan> findByStatusAndStartDateLessThanEqualAndEndDateGreaterThanEqual(String status, LocalDate startDate,
+            LocalDate endDate);
 }

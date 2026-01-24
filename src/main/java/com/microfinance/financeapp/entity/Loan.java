@@ -4,46 +4,46 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "loans")
 public class Loan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Member member;
-
-    // Inputs
+    private double loanAmount;
     private double principalAmount;
     private double interestAmount;
+    private int totalWeeks;
     private int repaymentWeeks;
-
-    // Auto calculated
     private double weeklyInstallment;
     private double weeklyPrincipal;
     private double weeklyInterest;
-
-    // Balances
     private double principalBalance;
     private double interestBalance;
-
+    private String status;
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private String status; // ACTIVE / PRE_CLOSED / CLOSED
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    // getters & setters
+    // Getters & Setters
+
     public Long getId() {
         return id;
     }
 
-    public Member getMember() {
-        return member;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public double getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanAmount(double loanAmount) {
+        this.loanAmount = loanAmount;
     }
 
     public double getPrincipalAmount() {
@@ -60,6 +60,14 @@ public class Loan {
 
     public void setInterestAmount(double interestAmount) {
         this.interestAmount = interestAmount;
+    }
+
+    public int getTotalWeeks() {
+        return totalWeeks;
+    }
+
+    public void setTotalWeeks(int totalWeeks) {
+        this.totalWeeks = totalWeeks;
     }
 
     public int getRepaymentWeeks() {
@@ -110,6 +118,14 @@ public class Loan {
         this.interestBalance = interestBalance;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -126,11 +142,11 @@ public class Loan {
         this.endDate = endDate;
     }
 
-    public String getStatus() {
-        return status;
+    public Member getMember() {
+        return member;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setMember(Member member) {
+        this.member = member;
     }
 }
