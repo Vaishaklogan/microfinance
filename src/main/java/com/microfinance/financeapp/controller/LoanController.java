@@ -19,11 +19,17 @@ public class LoanController {
         this.memberRepository = memberRepository;
     }
 
+    @GetMapping
+    public String loans(Model model) {
+        model.addAttribute("loans", loanRepository.findAll());
+        return "loans";
+    }
+
     @GetMapping("/new")
     public String newLoan(Model model) {
         model.addAttribute("loan", new Loan());
         model.addAttribute("members", memberRepository.findAll());
-        return "loan-form";
+        return "add-loan";
     }
 
     @PostMapping("/save")

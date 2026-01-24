@@ -1,6 +1,6 @@
 package com.microfinance.financeapp.controller;
 
-import com.microfinance.financeapp.model.Loan;
+import com.microfinance.financeapp.entity.Loan;
 import com.microfinance.financeapp.repository.LoanRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
