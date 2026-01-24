@@ -35,13 +35,20 @@ public class LoanController {
 
     @PostMapping("/save")
     @SuppressWarnings("null")
-    public String saveLoan(@RequestParam Long memberId,
+    public String saveLoan(@RequestParam(required = false) Long memberId,
+            @RequestParam(required = false) Long member_id,
             @RequestParam double loanAmount,
             @RequestParam double interestAmount,
             @RequestParam int repaymentWeeks) {
 
+        // Handle both memberId and member.id parameter formats
+        Long actualMemberId = memberId != null ? memberId : member_id;
+        if (actualMemberId == null) {
+            return "redirect:/loans/new?error=true";
+        }
+
         // Fetch the member
-        Member member = memberRepository.findById(memberId).orElseThrow();
+        Member member = memberRepository.findById(actualMemberId).orElseThrow();
 
         // Create and initialize loan
         Loan loan = new Loan();
@@ -50,12 +57,34 @@ public class LoanController {
         loan.setPrincipalAmount(loanAmount);
         loan.setInterestAmount(interestAmount);
         loan.setRepaymentWeeks(repaymentWeeks);
-        loan.setStatus("PENDING");
+        loan.setTotalWeeks(repaymentWeeks);
+        loan.setStatus("ACTIVE");
+
+        // Calculate weekly amounts
+        double weeklyTotal = (loanAmount + interestAmount) / repaymentWeeks;
+        double weeklyPrincipal = loanAmount / repaymentWeeks;
+        double weeklyInterest = interestAmount / repaymentWeeks;
+
+        loan.setWeeklyInstallment(roundTo2Decimals(weeklyTotal));
+        loan.setWeeklyPrincipal(roundTo2Decimals(weeklyPrincipal));
+        loan.setWeeklyInterest(roundTo2Decimals(weeklyInterest));
+
+        // Set balances equal to principal and interest amounts
+        loan.setPrincipalBalance(loanAmount);
+        loan.setInterestBalance(interestAmount);
+
+        // Set dates
+        loan.setStartDate(java.time.LocalDate.now());
+        loan.setEndDate(java.time.LocalDate.now().plusWeeks(repaymentWeeks));
 
         // Save the loan
         loanRepository.save(loan);
 
         return "redirect:/loans";
+    }
+
+    private double roundTo2Decimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 
     @GetMapping("/delete/{id}")

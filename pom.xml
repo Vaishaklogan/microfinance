@@ -56,6 +56,13 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- Apache POI for Excel Export -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+
         <!-- Test (kept but skipped in build) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
