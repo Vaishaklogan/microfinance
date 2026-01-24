@@ -1,40 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>Groups</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px 0;
+            margin-bottom: 40px;
+            color: white;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .page-header h2 {
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .content-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-add {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            color: white;
+        }
+        
+        .table thead {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .btn-delete {
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+            color: white;
+            padding: 6px 15px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-delete:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+            color: white;
+        }
+        
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 
-<body class="bg-light">
-
-    <div class="container mt-4">
-        <h2 class="mb-3">Groups</h2>
-
-        <a href="/groups/new" class="btn btn-success mb-3">Add Group</a>
-
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Name</th>
-                    <th>Start Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="g : ${groups}">
-                    <td th:text="${g.groupName}"></td>
-                    <td th:text="${g.startDate}"></td>
-                    <td th:text="${g.status}"></td>
-                    <td>
-                        <a class="btn btn-danger btn-sm" th:href="@{/groups/delete/{id}(id=${g.id})}">Delete</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<body>
+    <div class="page-header">
+        <div class="container">
+            <h2><i class="fas fa-layer-group"></i> Groups Management</h2>
+            <p style="margin: 0; opacity: 0.9;">Manage and organize customer groups</p>
+        </div>
     </div>
 
+    <div class="container">
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+
+        <div class="content-container">
+            <a href="/groups/new" class="btn-add">
+                <i class="fas fa-plus"></i> Add New Group
+            </a>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-layer-group"></i> Group Name</th>
+                            <th><i class="fas fa-calendar-check"></i> Start Date</th>
+                            <th><i class="fas fa-toggle-on"></i> Status</th>
+                            <th style="width: 100px;"><i class="fas fa-cog"></i> Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="g : ${groups}" th:if="${groups.size() > 0}">
+                            <td th:text="${g.groupName}"></td>
+                            <td th:text="${g.startDate}"></td>
+                            <td>
+                                <span class="badge bg-success" th:text="${g.status}"></span>
+                            </td>
+                            <td>
+                                <a class="btn btn-delete" th:href="@{/groups/delete/{id}(id=${g.id})}" onclick="return confirm('Are you sure?');">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${groups.size() == 0}" class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle"></i> No groups found. <a href="/groups/new">Create one now</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

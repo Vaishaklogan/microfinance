@@ -2,68 +2,220 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Dashboard</title>
+    <title>Microfinance Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        .container {
-            display: flex;
-            gap: 20px;
-            padding: 40px;
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
         }
         
-        .card {
-            width: 200px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
+        .dashboard-header h1 {
+            color: white;
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dashboard-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 40px 20px;
+        }
+        
+        .card-link {
             text-decoration: none;
-            color: black;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
         }
         
-        .card:hover {
-            background: #eef2ff;
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            padding: 30px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--card-color), transparent);
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--card-color);
+        }
+        
+        .card-custom h3 {
+            color: #1f2937;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .card-custom p {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+        
+        .card-1 {
+            --card-color: #2563eb;
+        }
+        
+        .card-2 {
+            --card-color: #7c3aed;
+        }
+        
+        .card-3 {
+            --card-color: #10b981;
+        }
+        
+        .card-4 {
+            --card-color: #f59e0b;
+        }
+        
+        .card-5 {
+            --card-color: #ef4444;
+        }
+        
+        .export-section {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .export-btn {
+            background: linear-gradient(90deg, #10b981, #059669);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .export-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 40px;
         }
     </style>
 </head>
 
 <body>
-
-    <h1 style="padding-left:40px;">Microfinance Dashboard</h1>
-
-    <div class="container">
-        <a href="/groups" class="card">
-            <h3>Groups</h3>
-            <p>Manage Groups</p>
-        </a>
-
-        <a href="/members" class="card">
-            <h3>Members</h3>
-            <p>Manage Members</p>
-        </a>
-
-        <a href="/loans" class="card">
-            <h3>Loans</h3>
-            <p>View & Manage Loans</p>
-        </a>
-
-        <a href="/loans/new" class="card">
-            <h3>Create Loan</h3>
-            <p>Create New Loan</p>
-        </a>
-
-        <a href="/collections" class="card">
-            <h3>Collections</h3>
-            <p>Weekly Collections</p>
-        </a>
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <h1><i class="fas fa-chart-line"></i> Microfinance Dashboard</h1>
+            <p>Manage Groups, Members, Loans & Collections</p>
+        </div>
     </div>
-    <a href="/loans/export">⬇ Download Loans Excel</a>
 
+    <!-- Main Content -->
+    <div class="container">
+        <div class="cards-container">
+            <a href="/groups" class="card-link">
+                <div class="card card-custom card-1">
+                    <div class="card-icon"><i class="fas fa-users"></i></div>
+                    <h3>Groups</h3>
+                    <p>Manage & organize customer groups</p>
+                </div>
+            </a>
+
+            <a href="/members" class="card-link">
+                <div class="card card-custom card-2">
+                    <div class="card-icon"><i class="fas fa-user-tie"></i></div>
+                    <h3>Members</h3>
+                    <p>Add and manage group members</p>
+                </div>
+            </a>
+
+            <a href="/loans" class="card-link">
+                <div class="card card-custom card-3">
+                    <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <h3>Loans</h3>
+                    <p>View & manage all loans</p>
+                </div>
+            </a>
+
+            <a href="/loans/new" class="card-link">
+                <div class="card card-custom card-4">
+                    <div class="card-icon"><i class="fas fa-plus-circle"></i></div>
+                    <h3>Create Loan</h3>
+                    <p>Create a new loan account</p>
+                </div>
+            </a>
+
+            <a href="/collections" class="card-link">
+                <div class="card card-custom card-5">
+                    <div class="card-icon"><i class="fas fa-cash-register"></i></div>
+                    <h3>Collections</h3>
+                    <p>Process weekly collections</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Export Section -->
+        <div class="export-section">
+            <h5 style="color: #1f2937; margin-bottom: 20px;"><i class="fas fa-download"></i> Export Data</h5>
+            <a href="/loans/export" class="export-btn">
+                <i class="fas fa-file-excel"></i> Download Loans Excel
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2026 Microfinance Management System. All rights reserved.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

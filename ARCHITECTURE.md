@@ -1,11 +1,13 @@
 # Microfinance Application - Complete Architecture
 
 ## Application Purpose
+
 Microfinance group management system for managing loans, weekly collections, and group finances with reporting.
 
 ---
 
 ## Technology Stack
+
 - **Framework**: Spring Boot 3.x
 - **Database**: PostgreSQL
 - **ORM**: Hibernate/JPA
@@ -19,6 +21,7 @@ Microfinance group management system for managing loans, weekly collections, and
 ## Core Entities & Relationships
 
 ### 1. **Group Entity**
+
 ```
 Fields:
 - id (Long, Primary Key)
@@ -31,6 +34,7 @@ Repository: GroupRepository
 ```
 
 **Business Logic**:
+
 - Groups are the primary organizational unit
 - Soft delete via status field
 - Members belong to groups
@@ -39,6 +43,7 @@ Repository: GroupRepository
 ---
 
 ### 2. **Member Entity**
+
 ```
 Fields:
 - id (Long, Primary Key)
@@ -54,6 +59,7 @@ Repository: MemberRepository
 ```
 
 **Business Logic**:
+
 - Soft delete via status field (marks as INACTIVE)
 - Always belongs to a group
 - Can have multiple loans
@@ -62,6 +68,7 @@ Repository: MemberRepository
 ---
 
 ### 3. **Loan Entity**
+
 ```
 Fields:
 - id (Long, Primary Key)
@@ -86,6 +93,7 @@ Repository: LoanRepository
 ```
 
 **Business Logic**:
+
 - Loans are created for specific members
 - Weekly installment = (Principal + Interest) / Repayment Weeks
 - Principal & Interest split across weekly payments
@@ -95,6 +103,7 @@ Repository: LoanRepository
 ---
 
 ### 4. **WeeklyCollection Entity**
+
 ```
 Fields:
 - id (Long, Primary Key)
@@ -115,12 +124,14 @@ Business Purpose:
 ## Service Layer
 
 ### LoanCalculationService
+
 **Purpose**: Initialize loan calculation on creation
+
 ```
 Methods:
 - calculateLoanEndDate(Loan loan, LocalDate groupStartDate)
   → Sets loan start & end dates based on repayment weeks
-  
+
 - calculateLoanInstallments(Loan loan)
   → Calculates:
     * Total payable = principal + interest
@@ -132,12 +143,14 @@ Methods:
 ```
 
 ### WeeklyCollectionService
+
 **Purpose**: Handle payment processing and balance updates
+
 ```
 Methods:
 - getLoansForCollection(LocalDate date)
   → Returns active loans that should be collected on date
-  
+
 - applyPayment(Loan loan, double amount, LocalDate date)
   → Processes payment:
     * Calculates interest paid (capped by interest balance)
@@ -148,15 +161,17 @@ Methods:
 ```
 
 ### ReportService
+
 **Purpose**: Generate financial reports
+
 ```
 Methods:
 - getWeeklyDeposit(LocalDate date)
   → Total amount collected on specific Sunday
-  
+
 - getGroupWiseTotals(LocalDate date)
   → Breakdown by group for specific Sunday
-  
+
 - getYearlySundayPlan(int year)
   → All Sundays in year with collection targets
 ```
@@ -166,17 +181,20 @@ Methods:
 ## Controller Layer - Complete Flow
 
 ### HomeController
+
 ```
 GET / → dashboard.html
 ```
 
-### DashboardController  
+### DashboardController
+
 ```
 GET / → dashboard.html (main landing page)
        → Links to all features
 ```
 
 ### GroupController
+
 ```
 GET  /groups            → List all groups (groups.html)
 GET  /groups/new        → Create form (add-group.html)
@@ -186,6 +204,7 @@ GET  /groups/delete/{id} → Delete group (hard delete)
 ```
 
 ### MemberController
+
 ```
 GET  /members           → List active members (members.html)
 GET  /members/new       → Create form (add-member.html)
@@ -194,6 +213,7 @@ POST /members/delete/{id} → Soft delete (set status=INACTIVE)
 ```
 
 ### LoanController
+
 ```
 GET  /loans             → List all loans (loans.html)
 GET  /loans/new         → Create form (add-loan.html)
@@ -202,6 +222,7 @@ GET  /loans/delete/{id} → Hard delete loan
 ```
 
 ### LoanExportController
+
 ```
 GET /loans/export       → Stream Excel file with all loans
                            Uses Apache POI to generate XLSX
@@ -209,6 +230,7 @@ GET /loans/export       → Stream Excel file with all loans
 ```
 
 ### WeeklyCollectionController
+
 ```
 GET  /collections           → Show collection search form
 POST /collections/search    → Find loans for group+date
@@ -216,6 +238,7 @@ POST /collections/pay       → Process payment for a loan
 ```
 
 ### ReportController
+
 ```
 GET  /reports/weekly    → Weekly report form (weekly-report.html)
 POST /reports/weekly    → Weekly report with totals
@@ -228,6 +251,7 @@ GET  /reports/yearly    → Yearly report (yearly-report.html)
 ## Data Flow Examples
 
 ### Flow 1: Creating and Managing a Group
+
 ```
 1. User: Dashboard → Click "Groups"
 2. Route: GET /groups
@@ -246,6 +270,7 @@ GET  /reports/yearly    → Yearly report (yearly-report.html)
 ```
 
 ### Flow 2: Creating a Loan and Collecting Payment
+
 ```
 A. CREATE LOAN:
 1. User: Dashboard → Click "Create Loan"
@@ -292,6 +317,7 @@ B. PROCESS PAYMENT:
 ```
 
 ### Flow 3: Generating Reports
+
 ```
 1. User: Dashboard → Reports → Weekly
 2. Route: GET /reports/weekly
@@ -313,27 +339,31 @@ B. PROCESS PAYMENT:
 ## Database Schema Summary
 
 ### groups
+
 ```sql
 id (PK) | groupName | startDate | status | created_at
 ```
 
 ### members
+
 ```sql
 id (PK) | name | aadhaar | address | landmark | status | group_id (FK) | created_at
 ```
 
 ### loan
+
 ```sql
-id (PK) | member_id (FK) | principalAmount | interestAmount | 
-totalWeeks | repaymentWeeks | weeklyInstallment | 
-weeklyPrincipal | weeklyInterest | 
-principalBalance | interestBalance | 
+id (PK) | member_id (FK) | principalAmount | interestAmount |
+totalWeeks | repaymentWeeks | weeklyInstallment |
+weeklyPrincipal | weeklyInterest |
+principalBalance | interestBalance |
 status | startDate | endDate | loanAmount | created_at
 ```
 
 ### weekly_collection
+
 ```sql
-id (PK) | loan_id (FK) | collectionDate | principalPaid | 
+id (PK) | loan_id (FK) | collectionDate | principalPaid |
 interestPaid | remainingPrincipal | remainingInterest | created_at
 ```
 
@@ -374,18 +404,21 @@ interestPaid | remainingPrincipal | remainingInterest | created_at
 ## Important Notes
 
 ### Security Considerations
+
 - All monetary transactions tracked in database
 - Audit trail in weekly_collection table
 - Soft deletes preserve historical data
 - No user authentication currently (for local deployment)
 
 ### Performance
+
 - Queries filtered by group for better scalability
 - Date-based range queries for collections
 - Lazy loading on relationships
 - Excel export streams to avoid memory issues
 
 ### Extensibility
+
 - Service layer handles business logic
 - Repository layer ready for additional query methods
 - Template structure allows easy UI enhancements
@@ -405,6 +438,6 @@ interestPaid | remainingPrincipal | remainingInterest | created_at
 ✅ Form validations in place  
 ✅ Navigation flows complete  
 ✅ No compilation errors  
-✅ No runtime errors expected  
+✅ No runtime errors expected
 
 **Status**: Ready for production deployment 🚀
