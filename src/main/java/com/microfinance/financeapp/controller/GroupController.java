@@ -19,13 +19,25 @@ public class GroupController {
     @GetMapping
     public String groups(Model model) {
         model.addAttribute("groups", groupRepository.findAll());
-        model.addAttribute("group", new Group());
         return "groups";
+    }
+
+    @GetMapping("/new")
+    public String newGroup(Model model) {
+        model.addAttribute("group", new Group());
+        return "add-group";
+    }
+
+    @PostMapping
+    @SuppressWarnings("null")
+    public String saveGroup(@ModelAttribute Group group) {
+        groupRepository.save(group);
+        return "redirect:/groups";
     }
 
     @PostMapping("/save")
     @SuppressWarnings("null")
-    public String saveGroup(@ModelAttribute Group group) {
+    public String saveGroupLegacy(@ModelAttribute Group group) {
         groupRepository.save(group);
         return "redirect:/groups";
     }
