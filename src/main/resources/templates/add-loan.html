@@ -14,7 +14,7 @@
         <form method="post" action="/loans/save">
             <div class="mb-3">
                 <label class="form-label">Member:</label>
-                <select class="form-select" name="member.id" required>
+                <select class="form-select" name="memberId" required>
                     <option value="">-- Select Member --</option>
                     <option th:each="m : ${members}" 
                             th:value="${m.id}" 
