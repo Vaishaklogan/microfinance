@@ -122,7 +122,14 @@
             <p><i class="fas fa-info-circle"></i> A unique Member ID will be automatically generated after saving</p>
         </div>
 
-        <form method="post" action="/members">
+        <div th:if="${groups == null || groups.isEmpty()}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> <strong>No Groups Available!</strong>
+            <p>Please create a group first before adding members.</p>
+            <a href="/groups/new" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Create Group</a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form method="post" action="/members" th:if="${groups != null && !groups.isEmpty()}">
             <div class="mb-3">
                 <label class="form-label"><i class="fas fa-user"></i> Name</label>
                 <input type="text" class="form-control" name="name" placeholder="Enter member name" required>
