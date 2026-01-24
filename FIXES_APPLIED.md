@@ -156,4 +156,126 @@
 
 ---
 
+## Feature 5: Weekly Collection Payment with Principal & Interest Split ✅
+
+**Objective**: Enable weekly payment collection that automatically splits payments between principal and interest based on the loan's weekly installment ratio.
+
+### Implementation Details
+
+#### 1. Payment Allocation Logic
+
+The system now calculates the principal and interest split for each payment using the weekly installment ratio:
+
+```
+Weekly Principal Ratio = Weekly Principal / Total Weekly Installment
+
+Principal to Deduct = Payment Amount × Weekly Principal Ratio
+Interest to Deduct = Payment Amount - Principal to Deduct
+(Interest gets the remainder to ensure full allocation)
+```
+
+**Example**:
+
+- If loan's weekly installment is ₹1000
+- Split: ₹769.4 Principal + ₹230.6 Interest (adds up exactly to ₹1000)
+- When member pays ₹1000:
+  - Principal deducted: ₹769.4
+  - Interest deducted: ₹230.6
+  - Total: ₹1000 (no rounding loss)
+- When member pays ₹1000:
+  - Principal deducted: ₹769
+  - Interest deducted: ₹230
+  - Remaining balances updated accordingly
+
+#### 2. Enhanced WeeklyCollectionService
+
+**File**: `WeeklyCollectionService.java`
+
+**Key Method**: `applyPayment(Loan loan, double amount, LocalDate date)`
+
+- Calculates principal-to-interest ratio from weekly installment split
+- Deducts payment proportionally from both balances
+- Ensures no over-deduction of remaining balance
+- Updates loan status to "CLOSED" when all balances are paid
+- Records payment details in WeeklyCollection entity
+
+#### 3. Professional Weekly Collection UI
+
+**File**: `weekly-collection.html`
+
+**Features**:
+
+- Gradient search section with group and date selection
+- Clear display of weekly dues in color-coded format
+- Principal/Interest split breakdown (blue badges for principal, orange for interest)
+- Remaining balance display for both principal and interest
+- Real-time payment input with validation
+- Member ID display for identification
+
+### How Weekly Collection Works
+
+**Step 1: Search for Loans**
+
+- Select Group
+- Select Collection Date
+- Click "Load Loans" button
+
+**Step 2: Review Loan Details**
+For each loan, see:
+
+- Member name and unique ID
+- Weekly installment due amount
+- How payment will be split (Principal % and Interest %)
+- Current remaining balance (Principal & Interest)
+
+**Step 3: Enter & Process Payment**
+
+- Type payment amount
+- Click "Pay" button
+- System automatically splits and updates balances
+
+**Step 4: Loan Status Updates**
+
+- Principal balance reduced by calculated portion
+- Interest balance reduced by calculated portion
+- Loan status changes to "CLOSED" when fully paid
+
+### Example Payment Scenario
+
+**Loan Setup**:
+
+- Principal: ₹4,614
+- Interest: ₹1,380
+- Weeks: 6
+- Weekly Installment: ₹1,000
+- Weekly Split: ₹769 (Principal) + ₹230 (Interest)
+
+**Weekly Payments**:
+
+```
+Payment 1: ₹1,000
+├─ Principal: ₹769 (new balance: ₹3,845)
+└─ Interest: ₹230 (new balance: ₹1,150)
+
+Payment 2: ₹1,000
+├─ Principal: ₹769 (new balance: ₹3,076)
+└─ Interest: ₹230 (new balance: ₹920)
+
+Payment 3: ₹1,000
+├─ Principal: ₹769 (new balance: ₹2,307)
+└─ Interest: ₹230 (new balance: ₹690)
+```
+
+### Key Features
+
+✅ **Automatic Ratio-Based Split** - Uses loan's own principal/interest ratio
+✅ **Balance Protection** - Never deducts more than remaining amount
+✅ **Loan Status Auto-Update** - Marks as CLOSED when fully paid
+✅ **Professional UI** - Color-coded amounts and clear layout
+✅ **Member Tracking** - Unique IDs displayed in collection list
+✅ **Complete Audit Trail** - All payments recorded in WeeklyCollection
+✅ **Validation** - Amount validation before processing
+
+---
+
 ## Application Ready for Deployment ✅

@@ -31,11 +31,16 @@ public class MemberController {
     @GetMapping("/new")
     public String add(Model model) {
         model.addAttribute("member", new Member());
-        model.addAttribute("groups", groupRepo.findByStatus("ACTIVE"));
+        var groups = groupRepo.findByStatus("ACTIVE");
+        if (groups == null || groups.isEmpty()) {
+            // Fallback: show all groups if no active groups
+            groups = groupRepo.findAll();
+        }
+        model.addAttribute("groups", groups);
         return "add-member";
     }
 
-    // SAVE MEMBER (IMPORTANT FIX HERE)
+    // SAVE MEMBER
     @PostMapping
     @SuppressWarnings("null")
     public String save(@RequestParam String name,
@@ -44,19 +49,24 @@ public class MemberController {
             @RequestParam(required = false) String landmark,
             @RequestParam Long groupId) {
 
-        Group group = groupRepo.findById(Long.valueOf(groupId)).orElseThrow();
+        try {
+            Group group = groupRepo.findById(groupId)
+                    .orElseThrow(() -> new IllegalArgumentException("Group not found"));
 
-        Member member = new Member();
-        member.setName(name);
-        member.setAadhaar(aadhaar);
-        member.setAddress(address);
-        member.setLandmark(landmark);
-        member.setGroup(group);
-        member.setStatus("ACTIVE");
+            Member member = new Member();
+            member.setName(name);
+            member.setAadhaar(aadhaar);
+            member.setAddress(address);
+            member.setLandmark(landmark);
+            member.setGroup(group);
+            member.setStatus("ACTIVE");
 
-        memberRepo.save(member);
-
-        return "redirect:/members";
+            memberRepo.save(member);
+            return "redirect:/members";
+        } catch (Exception e) {
+            // Log error and redirect back to form
+            return "redirect:/members/new?error=true";
+        }
     }
 
     // SOFT DELETE

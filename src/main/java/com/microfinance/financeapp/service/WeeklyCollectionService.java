@@ -28,25 +28,47 @@ public class WeeklyCollectionService {
                         "ACTIVE", date, date);
     }
 
-    // Apply payment
+    // Apply payment with proper principal and interest split
     public void applyPayment(Loan loan, double amount, LocalDate date) {
+        // Calculate the ratio of principal to interest based on weekly installment
+        // split
+        double weeklyTotal = loan.getWeeklyInstallment();
+        double weeklyPrincipal = loan.getWeeklyPrincipal();
 
-        double interestPaid = Math.min(amount, loan.getInterestBalance());
-        double principalPaid = amount - interestPaid;
+        // Calculate principal portion based on ratio
+        double principalRatio = weeklyPrincipal / weeklyTotal;
 
-        loan.setInterestBalance(round(loan.getInterestBalance() - interestPaid));
-        loan.setPrincipalBalance(round(loan.getPrincipalBalance() - principalPaid));
+        // First, calculate principal portion
+        double principalToDeduct = round(amount * principalRatio);
 
+        // Interest gets the remaining to ensure amount is fully allocated (e.g., 769.4
+        // + 230.6 = 1000)
+        double interestToDeduct = round(amount - principalToDeduct);
+
+        // Ensure we don't deduct more than what's remaining
+        if (principalToDeduct > loan.getPrincipalBalance()) {
+            principalToDeduct = loan.getPrincipalBalance();
+        }
+        if (interestToDeduct > loan.getInterestBalance()) {
+            interestToDeduct = loan.getInterestBalance();
+        }
+
+        // Update loan balances
+        loan.setInterestBalance(round(loan.getInterestBalance() - interestToDeduct));
+        loan.setPrincipalBalance(round(loan.getPrincipalBalance() - principalToDeduct));
+
+        // Mark loan as CLOSED if all balances are paid
         if (loan.getPrincipalBalance() <= 0 && loan.getInterestBalance() <= 0) {
             loan.setStatus("CLOSED");
         }
 
+        // Record the payment
         WeeklyCollection wc = new WeeklyCollection();
         wc.setLoan(loan);
         wc.setCollectionDate(date);
         wc.setAmountPaid(amount);
-        wc.setPrincipalPaid(principalPaid);
-        wc.setInterestPaid(interestPaid);
+        wc.setPrincipalPaid(principalToDeduct);
+        wc.setInterestPaid(interestToDeduct);
 
         collectionRepository.save(wc);
         loanRepository.save(loan);
