@@ -40,47 +40,51 @@ public class LoanController {
             @RequestParam double loanAmount,
             @RequestParam double interestAmount,
             @RequestParam int repaymentWeeks) {
+        try {
+            // Handle both memberId and member.id parameter formats
+            Long actualMemberId = memberId != null ? memberId : member_id;
+            if (actualMemberId == null) {
+                return "redirect:/loans/new?error=true";
+            }
 
-        // Handle both memberId and member.id parameter formats
-        Long actualMemberId = memberId != null ? memberId : member_id;
-        if (actualMemberId == null) {
+            // Fetch the member
+            Member member = memberRepository.findById(actualMemberId).orElseThrow();
+
+            // Create and initialize loan
+            Loan loan = new Loan();
+            loan.setMember(member);
+            loan.setLoanAmount(loanAmount);
+            loan.setPrincipalAmount(loanAmount);
+            loan.setInterestAmount(interestAmount);
+            loan.setRepaymentWeeks(repaymentWeeks);
+            loan.setTotalWeeks(repaymentWeeks);
+            loan.setStatus("ACTIVE");
+
+            // Calculate weekly amounts
+            double weeklyTotal = (loanAmount + interestAmount) / repaymentWeeks;
+            double weeklyPrincipal = loanAmount / repaymentWeeks;
+            double weeklyInterest = interestAmount / repaymentWeeks;
+
+            loan.setWeeklyInstallment(roundTo2Decimals(weeklyTotal));
+            loan.setWeeklyPrincipal(roundTo2Decimals(weeklyPrincipal));
+            loan.setWeeklyInterest(roundTo2Decimals(weeklyInterest));
+
+            // Set balances equal to principal and interest amounts
+            loan.setPrincipalBalance(loanAmount);
+            loan.setInterestBalance(interestAmount);
+
+            // Set dates
+            loan.setStartDate(java.time.LocalDate.now());
+            loan.setEndDate(java.time.LocalDate.now().plusWeeks(repaymentWeeks));
+
+            // Save the loan
+            loanRepository.save(loan);
+
+            return "redirect:/loans";
+        } catch (Exception e) {
+            // On any error, redirect to the new loan page with error flag
             return "redirect:/loans/new?error=true";
         }
-
-        // Fetch the member
-        Member member = memberRepository.findById(actualMemberId).orElseThrow();
-
-        // Create and initialize loan
-        Loan loan = new Loan();
-        loan.setMember(member);
-        loan.setLoanAmount(loanAmount);
-        loan.setPrincipalAmount(loanAmount);
-        loan.setInterestAmount(interestAmount);
-        loan.setRepaymentWeeks(repaymentWeeks);
-        loan.setTotalWeeks(repaymentWeeks);
-        loan.setStatus("ACTIVE");
-
-        // Calculate weekly amounts
-        double weeklyTotal = (loanAmount + interestAmount) / repaymentWeeks;
-        double weeklyPrincipal = loanAmount / repaymentWeeks;
-        double weeklyInterest = interestAmount / repaymentWeeks;
-
-        loan.setWeeklyInstallment(roundTo2Decimals(weeklyTotal));
-        loan.setWeeklyPrincipal(roundTo2Decimals(weeklyPrincipal));
-        loan.setWeeklyInterest(roundTo2Decimals(weeklyInterest));
-
-        // Set balances equal to principal and interest amounts
-        loan.setPrincipalBalance(loanAmount);
-        loan.setInterestBalance(interestAmount);
-
-        // Set dates
-        loan.setStartDate(java.time.LocalDate.now());
-        loan.setEndDate(java.time.LocalDate.now().plusWeeks(repaymentWeeks));
-
-        // Save the loan
-        loanRepository.save(loan);
-
-        return "redirect:/loans";
     }
 
     private double roundTo2Decimals(double value) {
@@ -91,6 +95,19 @@ public class LoanController {
     @SuppressWarnings("null")
     public String deleteLoan(@PathVariable Long id) {
         loanRepository.deleteById(Long.valueOf(id));
+        return "redirect:/loans";
+    }
+
+    @PostMapping("/close/{id}")
+    public String closeLoan(@PathVariable Long id) {
+        var loanOpt = loanRepository.findById(id);
+        if (loanOpt.isPresent()) {
+            Loan loan = loanOpt.get();
+            loan.setStatus("CLOSED");
+            loan.setPrincipalBalance(0);
+            loan.setInterestBalance(0);
+            loanRepository.save(loan);
+        }
         return "redirect:/loans";
     }
 }
