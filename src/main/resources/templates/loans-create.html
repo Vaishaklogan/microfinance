@@ -1,55 +1,41 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 <head>
     <title>Create Loan</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-light">
+<body>
 
-    <div class="container mt-4">
-        <h2>Create Loan</h2>
+    <h2>Create Loan</h2>
 
-        <a href="/dashboard" class="btn btn-secondary mb-3">Home</a>
+    <form action="/loans/save" method="post">
 
-        <form th:action="@{/loans}" method="post" th:object="${loan}">
+        <label>Member</label>
+        <select name="member.id" required>
+        <option value="">Select</option>
+        <option th:each="m : ${members}"
+                th:value="${m.id}"
+                th:text="${m.name}">
+        </option>
+    </select>
+        <br><br>
 
-            <!-- MEMBER -->
-            <div class="mb-3">
-                <label class="form-label">Member</label>
-                <select class="form-select" th:field="*{member.id}" required>
-                <option value="">Select Member</option>
-                <option th:each="m : ${members}"
-                        th:value="${m.id}"
-                        th:text="${m.name}">
-                </option>
-            </select>
-            </div>
+        <label>Principal Amount</label>
+        <input type="number" name="principalAmount" required>
+        <br><br>
 
-            <!-- PRINCIPAL -->
-            <div class="mb-3">
-                <label class="form-label">Principal Amount</label>
-                <input type="number" class="form-control" th:field="*{principalAmount}" required>
-            </div>
+        <label>Interest Amount</label>
+        <input type="number" name="interestAmount" required>
+        <br><br>
 
-            <!-- INTEREST -->
-            <div class="mb-3">
-                <label class="form-label">Interest Amount</label>
-                <input type="number" class="form-control" th:field="*{interestAmount}" required>
-            </div>
+        <label>Repayment Weeks</label>
+        <input type="number" name="repaymentWeeks" required>
+        <br><br>
 
-            <!-- WEEKS -->
-            <div class="mb-3">
-                <label class="form-label">Repayment Weeks</label>
-                <input type="number" class="form-control" th:field="*{repaymentWeeks}" required>
-            </div>
+        <button type="submit">SAVE</button>
 
-            <button type="submit" class="btn btn-success">
-            Save Loan
-        </button>
-        </form>
-    </div>
+    </form>
 
 </body>
 
