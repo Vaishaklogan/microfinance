@@ -4,26 +4,11 @@
 <head>
     <title>Loans</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .back-link {
-            color: #0d6efd;
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-        
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
 
 <body class="bg-light">
 
     <div class="container mt-4">
-        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
         <h2 class="mb-3">Loans</h2>
 
         <a href="/loans/new" class="btn btn-success mb-3">Create Loan</a>
@@ -51,12 +36,6 @@
                     <td>
                         <span class="badge bg-primary" th:text="${l.status}"></span>
                     </td>
-                    <td>
-                        <form th:action="@{/loans/close/{id}(id=${l.id})}" method="post" onsubmit="return confirm('Close this loan?')">
-                            <button class="btn btn-danger btn-sm">Close</button>
-                        </form>
-                    </td>
-
                 </tr>
             </tbody>
         </table>

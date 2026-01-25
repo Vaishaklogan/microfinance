@@ -20,23 +20,53 @@ public class MemberController {
         this.groupRepository = groupRepository;
     }
 
+    // Show all members
     @GetMapping
-    public String membersPage(Model model) {
+    public String listMembers(Model model) {
         model.addAttribute("members", memberRepository.findAll());
-        model.addAttribute("member", new Member());
-        model.addAttribute("groups", groupRepository.findAll());
         return "members";
     }
 
-    @PostMapping("/save")
-    public String saveMember(@ModelAttribute Member member) {
-        memberRepository.save(member);
-        return "redirect:/members";
+    // Show add member form
+    @GetMapping("/new")
+    public String showAddForm(Model model) {
+        model.addAttribute("member", new Member());
+        model.addAttribute("groups", groupRepository.findAll());
+        return "add-member";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteMember(@PathVariable Long id) {
-        memberRepository.deleteById(id);
-        return "redirect:/members";
+    // Save member
+    @PostMapping
+    public String saveMember(@ModelAttribute Member member, @RequestParam Long groupId) {
+        try {
+            var group = groupRepository.findById(groupId).orElseThrow();
+            member.setGroup(group);
+            member.setStatus("ACTIVE");
+            memberRepository.save(member);
+            return "redirect:/members";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/members/new?error=true";
+        }
+    }
+
+    // Search member by memberCode and show in members list
+    @GetMapping("/search")
+    public String searchMember(@RequestParam(required = false) String memberCode, Model model) {
+        if (memberCode != null && !memberCode.isEmpty()) {
+            var opt = memberRepository.findByMemberCode(memberCode);
+            if (opt.isPresent()) {
+                model.addAttribute("searchMember", opt.get());
+                model.addAttribute("memberCode", memberCode);
+                model.addAttribute("found", true);
+            } else {
+                model.addAttribute("found", false);
+                model.addAttribute("memberCode", memberCode);
+            }
+        }
+
+        model.addAttribute("members", memberRepository.findAll());
+        model.addAttribute("groups", groupRepository.findAll());
+        return "members";
     }
 }
