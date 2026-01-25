@@ -3,27 +3,38 @@ package com.microfinance.financeapp.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "members")
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String aadhaar;
-    private String address;
-    private String landmark;
+    @Column(unique = true, nullable = false)
+    private String memberCode;
 
+    private String name;
+    private String phone;
+    private String address;
+
+    private String status; // ACTIVE / INACTIVE
+
+    // 🔗 MANY MEMBERS → ONE GROUP
     @ManyToOne
+    @JoinColumn(name = "group_id")
     private Group group;
 
-    private String status; // ACTIVE / CLOSED
-
-    // Getters & Setters
+    // ---------- GETTERS & SETTERS ----------
 
     public Long getId() {
         return id;
+    }
+
+    public String getMemberCode() {
+        return memberCode;
+    }
+
+    public void setMemberCode(String memberCode) {
+        this.memberCode = memberCode;
     }
 
     public String getName() {
@@ -34,12 +45,12 @@ public class Member {
         this.name = name;
     }
 
-    public String getAadhaar() {
-        return aadhaar;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setAadhaar(String aadhaar) {
-        this.aadhaar = aadhaar;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getAddress() {
@@ -50,27 +61,21 @@ public class Member {
         this.address = address;
     }
 
-    public String getLandmark() {
-        return landmark;
-    }
-
-    public void setLandmark(String landmark) {
-        this.landmark = landmark;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
+    // ✅ STATUS
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    // ✅ GROUP
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }
