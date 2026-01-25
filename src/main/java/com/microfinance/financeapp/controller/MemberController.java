@@ -11,62 +11,39 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/members")
 public class MemberController {
 
-    private final MemberRepository memberRepository;
-    private final GroupRepository groupRepository;
+    private final MemberRepository memberRepo;
+    private final GroupRepository groupRepo;
 
-    public MemberController(MemberRepository memberRepository,
-            GroupRepository groupRepository) {
-        this.memberRepository = memberRepository;
-        this.groupRepository = groupRepository;
+    public MemberController(MemberRepository memberRepo, GroupRepository groupRepo) {
+        this.memberRepo = memberRepo;
+        this.groupRepo = groupRepo;
     }
 
-    // Show all members
     @GetMapping
-    public String listMembers(Model model) {
-        model.addAttribute("members", memberRepository.findAll());
+    public String list(Model model) {
+        model.addAttribute("members", memberRepo.findByStatus("ACTIVE"));
         return "members";
     }
 
-    // Show add member form
     @GetMapping("/new")
-    public String showAddForm(Model model) {
+    public String add(Model model) {
         model.addAttribute("member", new Member());
-        model.addAttribute("groups", groupRepository.findAll());
+        model.addAttribute("groups", groupRepo.findAll());
         return "add-member";
     }
 
-    // Save member
     @PostMapping
-    public String saveMember(@ModelAttribute Member member, @RequestParam Long groupId) {
-        try {
-            var group = groupRepository.findById(groupId).orElseThrow();
-            member.setGroup(group);
-            member.setStatus("ACTIVE");
-            memberRepository.save(member);
-            return "redirect:/members";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/members/new?error=true";
-        }
+    public String save(Member member) {
+        member.setStatus("ACTIVE");
+        memberRepo.save(member);
+        return "redirect:/members";
     }
 
-    // Search member by memberCode and show in members list
-    @GetMapping("/search")
-    public String searchMember(@RequestParam(required = false) String memberCode, Model model) {
-        if (memberCode != null && !memberCode.isEmpty()) {
-            var opt = memberRepository.findByMemberCode(memberCode);
-            if (opt.isPresent()) {
-                model.addAttribute("searchMember", opt.get());
-                model.addAttribute("memberCode", memberCode);
-                model.addAttribute("found", true);
-            } else {
-                model.addAttribute("found", false);
-                model.addAttribute("memberCode", memberCode);
-            }
-        }
-
-        model.addAttribute("members", memberRepository.findAll());
-        model.addAttribute("groups", groupRepository.findAll());
-        return "members";
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        Member m = memberRepo.findById(id).orElseThrow();
+        m.setStatus("INACTIVE");
+        memberRepo.save(m);
+        return "redirect:/members";
     }
 }
