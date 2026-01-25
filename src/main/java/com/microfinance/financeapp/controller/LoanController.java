@@ -34,33 +34,30 @@ public class LoanController {
     }
 
     @PostMapping("/save")
-    @SuppressWarnings("null")
-    public String saveLoan(@RequestParam(required = false) Long memberId,
-            @RequestParam(required = false) Long member_id,
-            @RequestParam double loanAmount,
-            @RequestParam double interestAmount,
-            @RequestParam int repaymentWeeks) {
+    public String saveLoan(@ModelAttribute Loan loan, @RequestParam Long memberId) {
         try {
-            // Handle both memberId and member.id parameter formats
-            Long actualMemberId = memberId != null ? memberId : member_id;
-            if (actualMemberId == null) {
+            // Log incoming values for debugging
+            System.out.println("Saving loan: memberId=" + memberId + ", loanAmount=" + loan.getLoanAmount()
+                    + ", interestAmount=" + loan.getInterestAmount() + ", repaymentWeeks=" + loan.getRepaymentWeeks());
+
+            Member member = memberRepository.findById(memberId).orElseThrow();
+            loan.setMember(member);
+
+            // Ensure essential fields are set
+            if (loan.getRepaymentWeeks() <= 0) {
                 return "redirect:/loans/new?error=true";
             }
 
-            // Fetch the member
-            Member member = memberRepository.findById(actualMemberId).orElseThrow();
+            // Calculate derived fields
+            double loanAmount = loan.getLoanAmount();
+            double interestAmount = loan.getInterestAmount();
+            int repaymentWeeks = loan.getRepaymentWeeks();
 
-            // Create and initialize loan
-            Loan loan = new Loan();
-            loan.setMember(member);
-            loan.setLoanAmount(loanAmount);
             loan.setPrincipalAmount(loanAmount);
             loan.setInterestAmount(interestAmount);
-            loan.setRepaymentWeeks(repaymentWeeks);
             loan.setTotalWeeks(repaymentWeeks);
             loan.setStatus("ACTIVE");
 
-            // Calculate weekly amounts
             double weeklyTotal = (loanAmount + interestAmount) / repaymentWeeks;
             double weeklyPrincipal = loanAmount / repaymentWeeks;
             double weeklyInterest = interestAmount / repaymentWeeks;
@@ -69,20 +66,16 @@ public class LoanController {
             loan.setWeeklyPrincipal(roundTo2Decimals(weeklyPrincipal));
             loan.setWeeklyInterest(roundTo2Decimals(weeklyInterest));
 
-            // Set balances equal to principal and interest amounts
             loan.setPrincipalBalance(loanAmount);
             loan.setInterestBalance(interestAmount);
 
-            // Set dates
             loan.setStartDate(java.time.LocalDate.now());
             loan.setEndDate(java.time.LocalDate.now().plusWeeks(repaymentWeeks));
 
-            // Save the loan
             loanRepository.save(loan);
-
             return "redirect:/loans";
         } catch (Exception e) {
-            // On any error, redirect to the new loan page with error flag
+            e.printStackTrace();
             return "redirect:/loans/new?error=true";
         }
     }
@@ -92,7 +85,6 @@ public class LoanController {
     }
 
     @GetMapping("/delete/{id}")
-    @SuppressWarnings("null")
     public String deleteLoan(@PathVariable Long id) {
         loanRepository.deleteById(Long.valueOf(id));
         return "redirect:/loans";
