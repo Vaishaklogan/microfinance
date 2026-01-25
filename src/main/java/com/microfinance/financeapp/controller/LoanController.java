@@ -41,9 +41,15 @@ public class LoanController {
         return "loans-create";
     }
 
-    // ✅ SAVE LOAN
     @PostMapping("/save")
     public String saveLoan(@ModelAttribute Loan loan) {
+
+        System.out.println(">>> SAVE LOAN HIT");
+        System.out.println("Principal: " + loan.getPrincipalAmount());
+        System.out.println("Interest: " + loan.getInterestAmount());
+        System.out.println("Weeks: " + loan.getRepaymentWeeks());
+        System.out.println("Member ID: " +
+                (loan.getMember() != null ? loan.getMember().getId() : "NULL"));
 
         Member member = memberRepository
                 .findById(loan.getMember().getId())
@@ -58,4 +64,5 @@ public class LoanController {
         loanRepository.save(loan);
         return "redirect:/loans";
     }
+
 }
