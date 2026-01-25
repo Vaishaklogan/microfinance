@@ -17,7 +17,8 @@ public class LoanController {
     private final MemberRepository memberRepository;
     private final LoanCalculationService loanCalculationService;
 
-    public LoanController(LoanRepository loanRepository,
+    public LoanController(
+            LoanRepository loanRepository,
             MemberRepository memberRepository,
             LoanCalculationService loanCalculationService) {
         this.loanRepository = loanRepository;
@@ -25,14 +26,14 @@ public class LoanController {
         this.loanCalculationService = loanCalculationService;
     }
 
-    // List all loans
+    // ✅ LIST LOANS
     @GetMapping
     public String listLoans(Model model) {
         model.addAttribute("loans", loanRepository.findAll());
         return "loans";
     }
 
-    // Show create loan form
+    // ✅ OPEN CREATE FORM
     @GetMapping("/new")
     public String showLoanForm(Model model) {
         model.addAttribute("loan", new Loan());
@@ -40,16 +41,16 @@ public class LoanController {
         return "loans-create";
     }
 
-    // Save loan with auto-calculation
-    @PostMapping
+    // ✅ SAVE LOAN
+    @PostMapping("/save")
     public String saveLoan(@ModelAttribute Loan loan) {
 
-        Member member = memberRepository.findById(
-                loan.getMember().getId()).orElseThrow();
+        Member member = memberRepository
+                .findById(loan.getMember().getId())
+                .orElseThrow();
 
         loan.setMember(member);
 
-        // Use group start date
         loanCalculationService.initializeLoan(
                 loan,
                 member.getGroup().getStartDate());
@@ -57,13 +58,4 @@ public class LoanController {
         loanRepository.save(loan);
         return "redirect:/loans";
     }
-
-    @PostMapping("/close/{id}")
-    public String closeLoan(@PathVariable Long id) {
-        Loan loan = loanRepository.findById(id).orElseThrow();
-        loan.setStatus("CLOSED");
-        loanRepository.save(loan);
-        return "redirect:/loans";
-    }
-
 }

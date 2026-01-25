@@ -9,19 +9,16 @@
 <body class="bg-light">
 
     <div class="container mt-4">
+        <h2>Create Loan</h2>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Create Loan</h2>
-            <a href="/" class="btn btn-outline-dark">🏠 Home</a>
-        </div>
+        <a href="/dashboard" class="btn btn-secondary mb-3">Home</a>
 
-        <form th:action="@{/loans}" method="post" th:object="${loan}">
-
+        <form th:action="@{/loans/save}" method="post" th:object="${loan}">
 
             <!-- MEMBER -->
             <div class="mb-3">
                 <label class="form-label">Member</label>
-                <select name="memberId" class="form-select" required>
+                <select class="form-select" th:field="*{member.id}" required>
                 <option value="">Select Member</option>
                 <option th:each="m : ${members}"
                         th:value="${m.id}"
@@ -30,28 +27,28 @@
             </select>
             </div>
 
-            <!-- LOAN AMOUNT -->
+            <!-- PRINCIPAL -->
             <div class="mb-3">
-                <label class="form-label">Loan Amount</label>
-                <input type="number" name="loanAmount" class="form-control" required>
+                <label class="form-label">Principal Amount</label>
+                <input type="number" class="form-control" th:field="*{principalAmount}" required>
             </div>
 
             <!-- INTEREST -->
             <div class="mb-3">
                 <label class="form-label">Interest Amount</label>
-                <input type="number" name="interestAmount" class="form-control" required>
+                <input type="number" class="form-control" th:field="*{interestAmount}" required>
             </div>
 
-            <!-- WEEKLY INSTALLMENT -->
+            <!-- WEEKS -->
             <div class="mb-3">
-                <label class="form-label">Weekly Installment</label>
-                <input type="number" name="weeklyInstallment" class="form-control" required>
+                <label class="form-label">Repayment Weeks</label>
+                <input type="number" class="form-control" th:field="*{repaymentWeeks}" required>
             </div>
 
-            <button type="submit" class="btn btn-save"><i class="fas fa-save"></i> Save loan</button>
-            <a href="/loans" class="btn btn-secondary ms-2">Cancel</a>
+            <button type="submit" class="btn btn-success">
+            Save Loan
+        </button>
         </form>
-
     </div>
 
 </body>

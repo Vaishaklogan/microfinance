@@ -7,24 +7,18 @@
 </head>
 
 <body class="bg-light">
-
     <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Loans</h2>
-            <a href="/" class="btn btn-outline-dark">🏠 Home</a>
-        </div>
+        <h2>Loans</h2>
 
         <a href="/loans/new" class="btn btn-success mb-3">Create Loan</a>
 
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered">
             <thead class="table-dark">
                 <tr>
                     <th>Member</th>
                     <th>Principal</th>
                     <th>Interest</th>
                     <th>Weekly Installment</th>
-                    <th>Principal Balance</th>
-                    <th>Interest Balance</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -34,8 +28,6 @@
                     <td th:text="${l.principalAmount}"></td>
                     <td th:text="${l.interestAmount}"></td>
                     <td th:text="${l.weeklyInstallment}"></td>
-                    <td th:text="${l.principalBalance}"></td>
-                    <td th:text="${l.interestBalance}"></td>
                     <td>
                         <span class="badge bg-primary" th:text="${l.status}"></span>
                     </td>
@@ -43,7 +35,6 @@
             </tbody>
         </table>
     </div>
-
 </body>
 
 </html>
