@@ -12,35 +12,38 @@
         <h2>Add Member</h2>
 
         <form method="post" action="/members">
+
             <div class="mb-3">
-                <label class="form-label">Name</label>
-                <input type="text" class="form-control" name="name" required>
+                <label>Name</label>
+                <input name="name" class="form-control" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Aadhaar</label>
-                <input type="text" class="form-control" name="aadhaar" required>
+                <label>Aadhaar</label>
+                <input name="aadhaar" class="form-control" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Address</label>
-                <textarea class="form-control" name="address"></textarea>
+                <label>Address</label>
+                <textarea name="address" class="form-control"></textarea>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Group</label>
-                <select class="form-select" name="groupId" required>
-                    <option value="">-- Select Group --</option>
-                    <option th:each="g : ${groups}"
-                            th:value="${g.id}"
-                            th:text="${g.groupName}">
-                    </option>
-                </select>
+                <label>Group</label>
+                <select name="groupId" class="form-select" required>
+            <option value="">Select Group</option>
+            <option th:each="g : ${groups}"
+                    th:value="${g.id}"
+                    th:text="${g.groupName}">
+            </option>
+        </select>
             </div>
 
             <button class="btn btn-success">Save Member</button>
             <a href="/members" class="btn btn-secondary">Cancel</a>
+
         </form>
+
     </div>
 
 </body>
