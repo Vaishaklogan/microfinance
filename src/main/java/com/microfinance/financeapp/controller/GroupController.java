@@ -16,36 +16,33 @@ public class GroupController {
         this.groupRepository = groupRepository;
     }
 
+    // Show all groups
     @GetMapping
-    public String groups(Model model) {
+    public String listGroups(Model model) {
         model.addAttribute("groups", groupRepository.findAll());
         return "groups";
     }
 
+    // Show add group form
     @GetMapping("/new")
-    public String newGroup(Model model) {
+    public String showAddForm(Model model) {
         model.addAttribute("group", new Group());
         return "add-group";
     }
 
+    // Save group
     @PostMapping
-    @SuppressWarnings("null")
     public String saveGroup(@ModelAttribute Group group) {
         groupRepository.save(group);
         return "redirect:/groups";
     }
 
-    @PostMapping("/save")
-    @SuppressWarnings("null")
-    public String saveGroupLegacy(@ModelAttribute Group group) {
-        groupRepository.save(group);
+    @PostMapping("/delete/{id}")
+    public String deleteGroup(@PathVariable Long id) {
+        Group g = groupRepository.findById(id).orElseThrow();
+        g.setStatus("INACTIVE");
+        groupRepository.save(g);
         return "redirect:/groups";
     }
 
-    @GetMapping("/delete/{id}")
-    @SuppressWarnings("null")
-    public String deleteGroup(@PathVariable Long id) {
-        groupRepository.deleteById(Long.valueOf(id));
-        return "redirect:/groups";
-    }
 }

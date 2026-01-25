@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Create Loan</title>
+</head>
+
+<body>
+
+    <h2>Create Loan</h2>
+
+    <a href="/">Home</a>
+
+    <form th:action="@{/loans/save}" method="post" th:object="${loan}">
+
+        <label>Member</label>
+        <select th:field="*{member.id}" required>
+        <option value="">Select Member</option>
+        <option th:each="m : ${members}"
+                th:value="${m.id}"
+                th:text="${m.name}">
+        </option>
+    </select>
+        <br><br>
+
+        <label>Loan Amount</label>
+        <input type="number" th:field="*{loanAmount}" required>
+        <br><br>
+
+        <label>Interest Amount</label>
+        <input type="number" th:field="*{interestAmount}" required>
+        <br><br>
+
+        <label>Weekly Installment</label>
+        <input type="number" th:field="*{weeklyInstallment}" required>
+        <br><br>
+
+        <button type="submit">Save Loan</button>
+    </form>
+
+</body>
+
+</html>
