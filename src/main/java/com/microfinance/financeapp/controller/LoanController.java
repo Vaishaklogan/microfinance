@@ -44,7 +44,17 @@ public class LoanController {
             @RequestParam double principalAmount,
             @RequestParam double interestAmount,
             @RequestParam int repaymentWeeks) {
-        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        if (repaymentWeeks <= 0) {
+            throw new RuntimeException("Repayment weeks must be > 0");
+        }
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        if (member.getGroup() == null || member.getGroup().getStartDate() == null) {
+            throw new RuntimeException("Member has no group or group start date");
+        }
 
         Loan loan = new Loan();
         loan.setMember(member);
