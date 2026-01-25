@@ -37,7 +37,7 @@ public class LoanController {
     public String showLoanForm(Model model) {
         model.addAttribute("loan", new Loan());
         model.addAttribute("members", memberRepository.findAll());
-        return "add-loan";
+        return "loans-create";
     }
 
     // Save loan with auto-calculation

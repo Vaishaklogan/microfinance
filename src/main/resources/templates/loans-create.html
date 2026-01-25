@@ -15,7 +15,8 @@
             <a href="/" class="btn btn-outline-dark">🏠 Home</a>
         </div>
 
-        <form th:action="@{/loans/save}" method="post">
+        <form th:action="@{/loans}" method="post" th:object="${loan}">
+
 
             <!-- MEMBER -->
             <div class="mb-3">
