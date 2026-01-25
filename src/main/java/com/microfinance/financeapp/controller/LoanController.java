@@ -26,43 +26,64 @@ public class LoanController {
         this.loanCalculationService = loanCalculationService;
     }
 
-    // ✅ LIST LOANS
+    // -------------------------
+    // LIST LOANS
+    // -------------------------
     @GetMapping
     public String listLoans(Model model) {
         model.addAttribute("loans", loanRepository.findAll());
         return "loans";
     }
 
-    // ✅ OPEN CREATE FORM
+    // -------------------------
+    // SHOW CREATE LOAN FORM
+    // -------------------------
     @GetMapping("/new")
-    public String showLoanForm(Model model) {
-        model.addAttribute("loan", new Loan());
+    public String showCreateLoanForm(Model model) {
         model.addAttribute("members", memberRepository.findAll());
-        return "loans-create";
+        return "add-loan";
     }
 
+    // -------------------------
+    // SAVE LOAN (THIS WAS BROKEN BEFORE)
+    // -------------------------
     @PostMapping("/save")
-    public String saveLoan(@ModelAttribute Loan loan) {
+    public String saveLoan(
+            @RequestParam Long memberId,
+            @RequestParam double principalAmount,
+            @RequestParam double interestAmount,
+            @RequestParam int repaymentWeeks) {
 
-        System.out.println(">>> SAVE LOAN HIT");
-        System.out.println("Principal: " + loan.getPrincipalAmount());
-        System.out.println("Interest: " + loan.getInterestAmount());
-        System.out.println("Weeks: " + loan.getRepaymentWeeks());
-        System.out.println("Member ID: " +
-                (loan.getMember() != null ? loan.getMember().getId() : "NULL"));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        Member member = memberRepository
-                .findById(loan.getMember().getId())
-                .orElseThrow();
-
+        Loan loan = new Loan();
         loan.setMember(member);
+        loan.setPrincipalAmount(principalAmount);
+        loan.setInterestAmount(interestAmount);
+        loan.setRepaymentWeeks(repaymentWeeks);
 
+        // AUTO CALCULATION
         loanCalculationService.initializeLoan(
                 loan,
                 member.getGroup().getStartDate());
 
         loanRepository.save(loan);
+
         return "redirect:/loans";
     }
 
+    // -------------------------
+    // CLOSE LOAN
+    // -------------------------
+    @PostMapping("/close/{id}")
+    public String closeLoan(@PathVariable Long id) {
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        loan.setStatus("CLOSED");
+        loanRepository.save(loan);
+
+        return "redirect:/loans";
+    }
 }
