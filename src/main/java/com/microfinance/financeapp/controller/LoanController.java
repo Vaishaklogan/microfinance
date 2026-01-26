@@ -6,8 +6,8 @@ import com.microfinance.financeapp.repository.LoanRepository;
 import com.microfinance.financeapp.repository.MemberRepository;
 import com.microfinance.financeapp.service.LoanCalculationService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/loans")
@@ -26,37 +26,37 @@ public class LoanController {
         this.loanCalculationService = loanCalculationService;
     }
 
+    // ✅ LIST LOANS
     @GetMapping
     public String listLoans(Model model) {
         model.addAttribute("loans", loanRepository.findAll());
         return "loans";
     }
 
+    // ✅ SHOW CREATE FORM
     @GetMapping("/new")
     public String showLoanForm(Model model) {
+        model.addAttribute("loan", new Loan());
         model.addAttribute("members", memberRepository.findAll());
-        return "add-loan";
+        return "add-loan"; // 🔥 MUST MATCH FILE NAME
     }
 
-    @PostMapping("/save")
-    public String saveLoan(
-            @RequestParam Long memberId,
-            @RequestParam double principalAmount,
-            @RequestParam double interestAmount,
-            @RequestParam int repaymentWeeks) {
-        Member member = memberRepository.findById(memberId).orElseThrow();
+    // ✅ SAVE LOAN (THIS WAS THE ISSUE)
+    @PostMapping
+    public String saveLoan(@ModelAttribute Loan loan) {
 
-        Loan loan = new Loan();
+        Member member = memberRepository
+                .findById(loan.getMember().getId())
+                .orElseThrow();
+
         loan.setMember(member);
-        loan.setPrincipalAmount(principalAmount);
-        loan.setInterestAmount(interestAmount);
-        loan.setRepaymentWeeks(repaymentWeeks);
 
         loanCalculationService.initializeLoan(
                 loan,
                 member.getGroup().getStartDate());
 
         loanRepository.save(loan);
+
         return "redirect:/loans";
     }
 }

@@ -11,14 +11,14 @@
     <div class="container mt-4">
         <h2>Create Loan</h2>
 
-        <a href="/loans" class="btn btn-secondary mb-3">Back</a>
+        <a href="/dashboard" class="btn btn-secondary mb-3">Home</a>
 
-        <!-- 🔥 IMPORTANT: action="/loans" -->
-        <form method="post" action="/loans">
+        <!-- 🔥 ACTION MUST BE /loans -->
+        <form th:action="@{/loans}" method="post" th:object="${loan}">
 
             <div class="mb-3">
                 <label class="form-label">Member</label>
-                <select class="form-select" name="member.id" required>
+                <select class="form-select" th:field="*{member.id}" required>
                 <option value="">Select Member</option>
                 <option th:each="m : ${members}"
                         th:value="${m.id}"
@@ -29,20 +29,22 @@
 
             <div class="mb-3">
                 <label class="form-label">Principal Amount</label>
-                <input type="number" class="form-control" name="principalAmount" required>
+                <input type="number" class="form-control" th:field="*{principalAmount}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Interest Amount</label>
-                <input type="number" class="form-control" name="interestAmount" required>
+                <input type="number" class="form-control" th:field="*{interestAmount}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Repayment Weeks</label>
-                <input type="number" class="form-control" name="repaymentWeeks" required>
+                <input type="number" class="form-control" th:field="*{repaymentWeeks}" required>
             </div>
 
-            <button type="submit" class="btn btn-success">Save Loan</button>
+            <button type="submit" class="btn btn-success">
+            Save Loan
+        </button>
         </form>
     </div>
 
