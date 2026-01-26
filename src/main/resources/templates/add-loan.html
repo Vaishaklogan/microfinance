@@ -13,13 +13,13 @@
 
         <a href="/dashboard" class="btn btn-secondary mb-3">Home</a>
 
-        <!-- 🔥 ACTION MUST BE /loans -->
         <form th:action="@{/loans}" method="post" th:object="${loan}">
 
+            <!-- ✅ THIS IS THE CRITICAL FIX -->
             <div class="mb-3">
                 <label class="form-label">Member</label>
-                <select class="form-select" th:field="*{member.id}" required>
-                <option value="">Select Member</option>
+                <select class="form-select" name="member.id" required>
+                <option value="">-- Select Member --</option>
                 <option th:each="m : ${members}"
                         th:value="${m.id}"
                         th:text="${m.name}">
@@ -29,17 +29,17 @@
 
             <div class="mb-3">
                 <label class="form-label">Principal Amount</label>
-                <input type="number" class="form-control" th:field="*{principalAmount}" required>
+                <input type="number" class="form-control" name="principalAmount" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Interest Amount</label>
-                <input type="number" class="form-control" th:field="*{interestAmount}" required>
+                <input type="number" class="form-control" name="interestAmount" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Repayment Weeks</label>
-                <input type="number" class="form-control" th:field="*{repaymentWeeks}" required>
+                <input type="number" class="form-control" name="repaymentWeeks" required>
             </div>
 
             <button type="submit" class="btn btn-success">

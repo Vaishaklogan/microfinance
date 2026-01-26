@@ -45,6 +45,10 @@ public class LoanController {
     @PostMapping
     public String saveLoan(@ModelAttribute Loan loan) {
 
+        if (loan.getMember() == null || loan.getMember().getId() == null) {
+            throw new IllegalArgumentException("Member must be selected");
+        }
+
         Member member = memberRepository
                 .findById(loan.getMember().getId())
                 .orElseThrow();
