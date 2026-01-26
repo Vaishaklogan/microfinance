@@ -7,17 +7,19 @@
 </head>
 
 <body class="bg-light">
-    <div class="container mt-4">
 
+    <div class="container mt-4">
         <h2>Create Loan</h2>
 
         <a href="/loans" class="btn btn-secondary mb-3">Back</a>
 
-        <form method="post" action="/loans/save">
+        <!-- IMPORTANT: method="post" action="/loans" -->
+        <form method="post" action="/loans">
 
+            <!-- MEMBER -->
             <div class="mb-3">
                 <label class="form-label">Member</label>
-                <select name="memberId" class="form-select" required>
+                <select class="form-select" name="member.id" required>
                 <option value="">Select Member</option>
                 <option th:each="m : ${members}"
                         th:value="${m.id}"
@@ -26,24 +28,29 @@
             </select>
             </div>
 
+            <!-- PRINCIPAL -->
             <div class="mb-3">
                 <label class="form-label">Principal Amount</label>
-                <input type="number" class="form-control" name="principalAmount" min="1" required>
+                <input type="number" class="form-control" name="principalAmount" required>
             </div>
 
+            <!-- INTEREST -->
             <div class="mb-3">
                 <label class="form-label">Interest Amount</label>
-                <input type="number" class="form-control" name="interestAmount" min="0" required>
+                <input type="number" class="form-control" name="interestAmount" required>
             </div>
 
+            <!-- REPAYMENT WEEKS -->
             <div class="mb-3">
                 <label class="form-label">Repayment Weeks</label>
-                <input type="number" class="form-control" name="repaymentWeeks" min="1" required>
+                <input type="number" class="form-control" name="repaymentWeeks" required>
             </div>
 
+            <!-- SUBMIT -->
             <button type="submit" class="btn btn-success">Save Loan</button>
         </form>
     </div>
+
 </body>
 
 </html>
