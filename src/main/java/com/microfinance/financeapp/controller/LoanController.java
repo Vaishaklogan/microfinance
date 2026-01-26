@@ -26,34 +26,32 @@ public class LoanController {
         this.loanCalculationService = loanCalculationService;
     }
 
-    // ✅ LIST LOANS
     @GetMapping
     public String listLoans(Model model) {
         model.addAttribute("loans", loanRepository.findAll());
         return "loans";
     }
 
-    // ✅ SHOW CREATE FORM
     @GetMapping("/new")
     public String showLoanForm(Model model) {
-        model.addAttribute("loan", new Loan());
         model.addAttribute("members", memberRepository.findAll());
-        return "add-loan"; // 🔥 MUST MATCH FILE NAME
+        return "add-loan";
     }
 
-    // ✅ SAVE LOAN (THIS WAS THE ISSUE)
+    // ✅ EXPLICIT PARAMS — NO BINDING CONFUSION
     @PostMapping
-    public String saveLoan(@ModelAttribute Loan loan) {
+    public String saveLoan(
+            @RequestParam Long memberId,
+            @RequestParam double principalAmount,
+            @RequestParam double interestAmount,
+            @RequestParam int repaymentWeeks) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
 
-        if (loan.getMember() == null || loan.getMember().getId() == null) {
-            throw new IllegalArgumentException("Member must be selected");
-        }
-
-        Member member = memberRepository
-                .findById(loan.getMember().getId())
-                .orElseThrow();
-
+        Loan loan = new Loan();
         loan.setMember(member);
+        loan.setPrincipalAmount(principalAmount);
+        loan.setInterestAmount(interestAmount);
+        loan.setRepaymentWeeks(repaymentWeeks);
 
         loanCalculationService.initializeLoan(
                 loan,
@@ -61,6 +59,14 @@ public class LoanController {
 
         loanRepository.save(loan);
 
+        return "redirect:/loans";
+    }
+
+    @PostMapping("/close/{id}")
+    public String closeLoan(@PathVariable Long id) {
+        Loan loan = loanRepository.findById(id).orElseThrow();
+        loan.setStatus("CLOSED");
+        loanRepository.save(loan);
         return "redirect:/loans";
     }
 }
