@@ -7,18 +7,17 @@
 </head>
 
 <body class="bg-light">
-
     <div class="container mt-4">
-        <h2>Create Loan</h2>
 
+        <h2>Create Loan</h2>
         <a href="/dashboard" class="btn btn-secondary mb-3">Home</a>
 
-        <form th:action="@{/loans}" method="post" th:object="${loan}">
+        <form method="post" action="/loans">
 
-            <!-- ✅ THIS IS THE CRITICAL FIX -->
+            <!-- ✅ SEND memberId EXPLICITLY -->
             <div class="mb-3">
                 <label class="form-label">Member</label>
-                <select class="form-select" name="member.id" required>
+                <select class="form-select" name="memberId" required>
                 <option value="">-- Select Member --</option>
                 <option th:each="m : ${members}"
                         th:value="${m.id}"
@@ -42,12 +41,9 @@
                 <input type="number" class="form-control" name="repaymentWeeks" required>
             </div>
 
-            <button type="submit" class="btn btn-success">
-            Save Loan
-        </button>
+            <button type="submit" class="btn btn-success">Save Loan</button>
         </form>
     </div>
-
 </body>
 
 </html>
