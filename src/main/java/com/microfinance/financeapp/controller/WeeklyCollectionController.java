@@ -26,7 +26,7 @@ public class WeeklyCollectionController {
         LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 
         model.addAttribute("collections",
-            loanPaymentRepository.findByPaymentDateBetween(startOfWeek, endOfWeek));
+                loanPaymentRepository.findByPaymentDateBetween(startOfWeek, endOfWeek));
 
         return "weekly-collection";
     }

@@ -11,37 +11,37 @@
             <h2 class="page-title">Create Loan</h2>
             <a href="/dashboard" class="btn btn-secondary mb-3">Home</a>
 
-        <form method="post" action="/loans">
+            <form method="post" action="/loans">
 
-            <!-- ✅ SEND memberId EXPLICITLY -->
-            <div class="mb-3">
-                <label class="form-label">Member</label>
-                <select class="form-select" name="memberId" required>
+                <!-- ✅ SEND memberId EXPLICITLY -->
+                <div class="mb-3">
+                    <label class="form-label">Member</label>
+                    <select class="form-select" name="memberId" required>
                 <option value="">-- Select Member --</option>
                 <option th:each="m : ${members}"
                         th:value="${m.id}"
                         th:text="${m.name}">
                 </option>
             </select>
-            </div>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Principal Amount</label>
-                <input type="number" class="form-control" name="principalAmount" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Principal Amount</label>
+                    <input type="number" class="form-control" name="principalAmount" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Interest Amount</label>
-                <input type="number" class="form-control" name="interestAmount" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Interest Amount</label>
+                    <input type="number" class="form-control" name="interestAmount" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Repayment Weeks</label>
-                <input type="number" class="form-control" name="repaymentWeeks" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Repayment Weeks</label>
+                    <input type="number" class="form-control" name="repaymentWeeks" required>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Save Loan</button>
-        </form>
+                <button type="submit" class="btn btn-primary">Save Loan</button>
+            </form>
         </div>
     </div>
 

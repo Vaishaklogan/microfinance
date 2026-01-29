@@ -41,7 +41,9 @@
                         <tr th:each="m : ${members}">
                             <td th:text="${m.id}"></td>
                             <td th:text="${m.name}"></td>
-                            <td><a th:href="@{/members/search(memberCode=${m.memberCode})}" th:text="${m.memberCode}"></a></td>
+                            <td>
+                                <a th:href="@{/members/search(memberCode=${m.memberCode})}" th:text="${m.memberCode}"></a>
+                            </td>
                             <td th:text="${m.group != null ? m.group.groupName : ''}"></td>
                             <td th:text="${m.status}"></td>
                             <td>
