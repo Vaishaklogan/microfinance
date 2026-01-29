@@ -1,40 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-        }
-        
-        a {
-            display: inline-block;
-            padding: 12px 20px;
-            margin: 10px;
-            background: #2196F3;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-    </style>
-</head>
+<head th:replace="layout :: head('Dashboard')"></head>
 
 <body>
+    <div th:replace="layout :: navbar"></div>
 
-    <h1>Microfinance Dashboard</h1>
+    <div class="container mt-4">
+        <div class="container-card">
+            <h1 class="page-title">Microfinance Dashboard</h1>
+            <div class="mt-4">
+                <a class="btn btn-primary me-2" href="/groups">Groups</a>
+                <a class="btn btn-primary me-2" href="/members">Members</a>
+                <a class="btn btn-primary me-2" href="/loans">Loans</a>
+                <a class="btn btn-outline-primary" href="/collection-history">Weekly Collection</a>
+            </div>
+        </div>
+    </div>
 
-    <a href="/groups">Groups</a>
-    <a href="/members">Members</a>
-    <a href="/loans">Loans</a>
-    <a href="/collections">Weekly Collection entry</a>
-    <a href="/weekly-report">Weekly-report</a>
-    <a href="/yearly-report">yearly Collection entry</a>
-    <a href="/weekly-collection" class="btn btn-primary">
-    Weekly demand amount
-</a>
-
+    <div th:replace="layout :: footer"></div>
+    <div th:replace="layout :: scripts"></div>
 
 </body>
 
