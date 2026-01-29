@@ -1,22 +1,22 @@
 package com.microfinance.financeapp.controller;
 
-import com.microfinance.financeapp.service.LoanPaymentService;
+import com.microfinance.financeapp.repository.LoanPaymentRepository;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-@RequestMapping("/payments")
 public class LoanPaymentController {
 
-    private final LoanPaymentService paymentService;
+    private final LoanPaymentRepository repo;
 
-    public LoanPaymentController(LoanPaymentService paymentService) {
-        this.paymentService = paymentService;
+    public LoanPaymentController(LoanPaymentRepository repo) {
+        this.repo = repo;
     }
 
-    @PostMapping("/pay/{loanId}")
-    public String pay(@PathVariable Long loanId) {
-        paymentService.makeWeeklyPayment(loanId);
-        return "redirect:/loans";
+    @GetMapping("/collection-history")
+    public String history(Model model) {
+        model.addAttribute("payments", repo.findAll());
+        return "collection-history";
     }
 }
