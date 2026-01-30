@@ -19,7 +19,7 @@ public class GroupController {
     // Show all groups
     @GetMapping
     public String listGroups(Model model) {
-        model.addAttribute("groups", groupRepository.findAll());
+        model.addAttribute("groups", groupRepository.findByStatus("ACTIVE"));
         return "groups";
     }
 
