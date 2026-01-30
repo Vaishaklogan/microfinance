@@ -16,7 +16,7 @@
                 <div class="col-auto">
                     <label class="form-label">Group</label>
                     <select name="groupId" class="form-select">
-                        <option th:value="" th:selected="${selectedGroupId == null}">ALL GROUPS</option>
+                        <option value="" th:selected="${selectedGroupId == null}">ALL GROUPS</option>
                         <option th:each="g : ${groups}" th:value="${g.id}"
                                 th:text="${g.groupName}"
                                 th:selected="${selectedGroupId != null and selectedGroupId == g.id}">
