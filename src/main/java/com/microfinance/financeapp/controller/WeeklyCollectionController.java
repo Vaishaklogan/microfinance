@@ -17,44 +17,42 @@ public class WeeklyCollectionController {
     private final LoanRepository loanRepository;
     private final PaymentRepository paymentRepository;
 
-    public WeeklyCollectionController(LoanRepository loanRepository,
+    public WeeklyCollectionController(
+            LoanRepository loanRepository,
             PaymentRepository paymentRepository) {
         this.loanRepository = loanRepository;
         this.paymentRepository = paymentRepository;
     }
 
-    // PAGE
+    // ONLY ONE GET
     @GetMapping
-    public String page(Model model) {
+    public String weeklyCollectionPage(Model model) {
         model.addAttribute("loans", loanRepository.findByStatus("ACTIVE"));
         return "weekly-collection";
     }
 
-    // PAY BUTTON — THIS WAS FAILING
+    // ONLY ONE POST
     @PostMapping("/pay")
-    public String pay(
-            @RequestParam("loanId") Long loanId,
-            @RequestParam("paidAmount") double paidAmount,
-            @RequestParam("paymentDate") LocalDate paymentDate) {
+    public String payWeeklyAmount(
+            @RequestParam Long loanId,
+            @RequestParam double paidAmount,
+            @RequestParam LocalDate paymentDate) {
 
         Loan loan = loanRepository.findById(loanId).orElseThrow();
 
-        // split logic
-        double principalPart = loan.getWeeklyPrincipal();
-        double interestPart = loan.getWeeklyInterest();
+        double principalPaid = loan.getWeeklyPrincipal();
+        double interestPaid = loan.getWeeklyInterest();
 
-        // update balances
-        loan.setPrincipalBalance(loan.getPrincipalBalance() - principalPart);
-        loan.setInterestBalance(loan.getInterestBalance() - interestPart);
+        loan.setPrincipalBalance(loan.getPrincipalBalance() - principalPaid);
+        loan.setInterestBalance(loan.getInterestBalance() - interestPaid);
 
         loanRepository.save(loan);
 
-        // save payment
         Payment payment = new Payment();
         payment.setLoan(loan);
         payment.setPaidAmount(paidAmount);
-        payment.setPrincipalPaid(principalPart);
-        payment.setInterestPaid(interestPart);
+        payment.setPrincipalPaid(principalPaid);
+        payment.setInterestPaid(interestPaid);
         payment.setPaymentDate(paymentDate);
 
         paymentRepository.save(payment);
