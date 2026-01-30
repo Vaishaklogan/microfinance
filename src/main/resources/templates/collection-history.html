@@ -48,7 +48,7 @@
                                 <br>
                                 <small class="text-muted" th:text="'ID: ' + ${c.loan.member.memberCode}"></small>
                             </td>
-                            <td th:text="${#dates.format(c.collectionDate, 'dd-MMM-yyyy')}"></td>
+                            <td th:text="${#dates.format(c.paymentDate, 'dd-MMM-yyyy')}"></td>
                             <td>
                                 <span class="amount-paid">₹ <span th:text="${#numbers.formatDecimal(c.amountPaid, 1, 2)}"></span></span>
                             </td>
