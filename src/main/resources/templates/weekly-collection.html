@@ -1,38 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <title>Weekly Collection</title>
-</head>
+<head th:replace="layout :: head('Weekly Collection')"></head>
 
 <body>
+    <div th:replace="layout :: navbar"></div>
 
-    <h2>Weekly Collection</h2>
+    <div class="container mt-4">
+        <div class="d-flex gap-2 align-items-end mb-3">
+            <form class="row g-2" method="get" action="/weekly-collection">
+                <div class="col-auto">
+                    <label class="form-label">Date</label>
+                    <input class="form-control" type="date" name="date" th:value="${selectedDate}" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Group</label>
+                    <select name="groupId" class="form-select">
+                        <option th:value="" th:selected="${selectedGroupId == null}">ALL GROUPS</option>
+                        <option th:each="g : ${groups}" th:value="${g.id}"
+                                th:text="${g.groupName}"
+                                th:selected="${selectedGroupId != null and selectedGroupId == g.id}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-auto align-self-end">
+                    <button class="btn btn-primary" type="submit">Load</button>
+                </div>
+            </form>
+        </div>
 
-    <table border="1">
-        <tr>
-            <th>Member</th>
-            <th>Amount</th>
-            <th>Pay</th>
-        </tr>
+        <div th:if="${loansByGroup == null || loansByGroup.isEmpty()}" class="alert alert-info">
+            No loans found for the selected criteria.
+        </div>
 
-        <tr th:each="l : ${loans}">
-            <td th:text="${l.member.name}"></td>
-            <td th:text="${l.weeklyInstallment}"></td>
+        <div th:each="g : ${groups}">
+            <div th:if="${loansByGroup[g.id] != null}">
+                <h4 class="mt-4" th:text="${g.groupName}"></h4>
+                <div class="card mb-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Principal Balance</th>
+                                    <th>Interest Balance</th>
+                                    <th>Weekly Payable</th>
+                                    <th>Paid Amount</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="l : ${loansByGroup[g.id]}">
+                                    <td th:text="${l.member.name}"></td>
+                                    <td>₹ <span th:text="${#numbers.formatDecimal(l.principalBalance, 1, 2)}"></span></td>
+                                    <td>₹ <span th:text="${#numbers.formatDecimal(l.interestBalance, 1, 2)}"></span></td>
+                                    <td>₹ <span th:text="${#numbers.formatDecimal(l.weeklyInstallment, 1, 2)}"></span></td>
+                                    <td>
+                                        <form th:action="@{/weekly-collection/pay}" method="post" class="d-flex gap-2 align-items-center">
+                                            <input type="hidden" name="loanId" th:value="${l.id}" />
+                                            <input type="hidden" name="groupId" th:value="${selectedGroupId}" />
+                                            <input type="hidden" name="date" th:value="${selectedDate}" />
+                                            <input class="form-control form-control-sm" type="number" step="0.01" min="0.01" name="paidAmount" th:value="${l.weeklyInstallment}" required />
+                                            <input class="form-control form-control-sm" type="date" name="paymentDate" th:value="${selectedDate}" required />
+                                            <button class="btn btn-success btn-sm" type="submit">Pay</button>
+                                        </form>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <td>
-                <form action="/weekly-collection/pay" method="post">
-                    <input type="hidden" name="loanId" th:value="${l.id}" />
-
-                    <input type="number" name="paidAmount" th:value="${l.weeklyInstallment}" required />
-
-                    <input type="date" name="paymentDate" required />
-
-                    <button type="submit">Pay</button>
-                </form>
-            </td>
-        </tr>
-    </table>
+    <div th:replace="layout :: footer"></div>
+    <div th:replace="layout :: scripts"></div>
 
 </body>
 

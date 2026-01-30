@@ -32,7 +32,7 @@ public class MemberController {
     // SHOW ADD FORM
     @GetMapping("/new")
     public String add(Model model) {
-        model.addAttribute("groups", groupRepo.findAll());
+        model.addAttribute("groups", groupRepo.findByStatus("ACTIVE"));
         return "add-member";
     }
 

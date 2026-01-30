@@ -16,6 +16,40 @@
                 <a class="btn btn-outline-primary" href="/collection-history">Weekly Collection</a>
             </div>
         </div>
+
+        <div class="container-card mt-4">
+            <h3 class="mb-3">Summary</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>Total Loan Amount Given</th>
+                            <td>₹ <span th:text="${#numbers.formatDecimal(totals.totalLoanAmount, 1, 2)}"></span></td>
+                        </tr>
+                        <tr>
+                            <th>Total Principal</th>
+                            <td>₹ <span th:text="${#numbers.formatDecimal(totals.totalPrincipal, 1, 2)}"></span></td>
+                        </tr>
+                        <tr>
+                            <th>Total Interest</th>
+                            <td>₹ <span th:text="${#numbers.formatDecimal(totals.totalInterest, 1, 2)}"></span></td>
+                        </tr>
+                        <tr>
+                            <th>Principal Collected</th>
+                            <td>₹ <span th:text="${#numbers.formatDecimal(totals.principalCollected, 1, 2)}"></span></td>
+                        </tr>
+                        <tr>
+                            <th>Interest Collected</th>
+                            <td>₹ <span th:text="${#numbers.formatDecimal(totals.interestCollected, 1, 2)}"></span></td>
+                        </tr>
+                        <tr>
+                            <th>Estimated Collection Next Week</th>
+                            <td>₹ <span th:text="${#numbers.formatDecimal(totals.estimatedNextWeek, 1, 2)}"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <div th:replace="layout :: footer"></div>
