@@ -129,9 +129,9 @@
                                 <span class="badge bg-success" th:text="${g.status}"></span>
                             </td>
                             <td>
-                                <a class="btn btn-delete" th:href="@{/groups/delete/{id}(id=${g.id})}" onclick="return confirm('Are you sure?');">
-                                    <i class="fas fa-trash"></i> Delete
-                                </a>
+                                <form th:action="@{/groups/delete/{id}(id=${g.id})}" method="post" onsubmit="return confirm('Are you sure?');" style="display:inline">
+                                    <button type="submit" class="btn btn-delete"><i class="fas fa-trash"></i> Delete</button>
+                                </form>
                             </td>
                         </tr>
                     </tbody>
