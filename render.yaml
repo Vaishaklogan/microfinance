@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: financeapp
+    env: java
+    plan: free
+    buildCommand: chmod +x mvnw && ./mvnw clean package -DskipTests
+    startCommand: java -jar target/financeapp-0.0.1-SNAPSHOT.jar
+    autoDeploy: true
