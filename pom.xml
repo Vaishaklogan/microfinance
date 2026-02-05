@@ -50,13 +50,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- H2 for local/dev runtime (fallback when SPRING_DATASOURCE_URL not provided) -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
