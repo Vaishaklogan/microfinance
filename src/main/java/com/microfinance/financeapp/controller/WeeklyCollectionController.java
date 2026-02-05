@@ -6,6 +6,8 @@ import com.microfinance.financeapp.entity.Group;
 import com.microfinance.financeapp.repository.GroupRepository;
 import com.microfinance.financeapp.repository.LoanRepository;
 import com.microfinance.financeapp.repository.PaymentRepository;
+import com.microfinance.financeapp.repository.WeeklyCollectionRepository;
+import com.microfinance.financeapp.entity.WeeklyCollection;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.*;
@@ -23,14 +25,17 @@ public class WeeklyCollectionController {
     private final LoanRepository loanRepository;
     private final PaymentRepository paymentRepository;
     private final GroupRepository groupRepository;
+    private final WeeklyCollectionRepository weeklyCollectionRepository;
 
     public WeeklyCollectionController(
             LoanRepository loanRepository,
             PaymentRepository paymentRepository,
-            GroupRepository groupRepository) {
+            GroupRepository groupRepository,
+            WeeklyCollectionRepository weeklyCollectionRepository) {
         this.loanRepository = loanRepository;
         this.paymentRepository = paymentRepository;
         this.groupRepository = groupRepository;
+        this.weeklyCollectionRepository = weeklyCollectionRepository;
     }
 
     // ONLY ONE GET
@@ -124,6 +129,15 @@ public class WeeklyCollectionController {
         payment.setPaymentDate(paymentDate);
 
         paymentRepository.save(payment);
+
+        // Save WeeklyCollection
+        WeeklyCollection weeklyCollection = new WeeklyCollection();
+        weeklyCollection.setLoan(loan);
+        weeklyCollection.setAmountPaid(paidAmount);
+        weeklyCollection.setPrincipalPaid(principalPaid);
+        weeklyCollection.setInterestPaid(interestPaid);
+        weeklyCollection.setCollectionDate(paymentDate);
+        weeklyCollectionRepository.save(weeklyCollection);
         loanRepository.save(loan);
 
         StringBuilder redirect = new StringBuilder("redirect:/weekly-collection");
